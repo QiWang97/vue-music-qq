@@ -25,10 +25,9 @@ yarn run test
 yarn run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Info
 
-###
-Radio 滑动事件
+一个模仿**QQ音乐移动端**的 vue 项目
+数据来自分析 **QQ音乐**网络请求的接口
+接口暴露在源码， 请勿商用！！
 
-SongList  滑动头部停止事件
