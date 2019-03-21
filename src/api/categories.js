@@ -1,0 +1,227 @@
+/*
+数据来源：
+
+GET: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_tag_conf.fcg?format=json&inCharset=utf8&outCharset=utf-8'
+Referer: https: //y.qq.com/n/yqq/playsquare/861218535.html
+categories[{}]
+----categoryGroupName ''
+----items [{}]
+------categoryId 0
+------categoryName ''
+*/
+/*
+"sortId":      1   2   3   4
+"sortName":   默认 "最新"  评分  最热
+*/
+
+export const categories = [{
+  "categoryGroupName": "热门",
+  "items": [{
+    "categoryId": 10000000,
+    "categoryName": "全部"
+  }]
+}, {
+  "categoryGroupName": "语种",
+  "items": [{
+    "categoryId": 165,
+    "categoryName": "国语"
+  }, {
+    "categoryId": 167,
+    "categoryName": "英语"
+  }, {
+    "categoryId": 168,
+    "categoryName": "韩语"
+  }, {
+    "categoryId": 166,
+    "categoryName": "粤语"
+  }, {
+    "categoryId": 169,
+    "categoryName": "日语"
+  }, {
+    "categoryId": 170,
+    "categoryName": "小语种"
+  }, {
+    "categoryId": 203,
+    "categoryName": "闽南语"
+  }, {
+    "categoryId": 204,
+    "categoryName": "法语"
+  }, {
+    "categoryId": 205,
+    "categoryName": "拉丁语"
+  }]
+}, {
+  "categoryGroupName": "流派",
+  "items": [{
+    "categoryId": 6,
+    "categoryName": "流行"
+  }, {
+    "categoryId": 15,
+    "categoryName": "轻音乐"
+  }, {
+    "categoryId": 11,
+    "categoryName": "摇滚"
+  }, {
+    "categoryId": 28,
+    "categoryName": "民谣"
+  }, {
+    "categoryId": 8,
+    "categoryName": "R&#38;B"
+  }, {
+    "categoryId": 153,
+    "categoryName": "嘻哈"
+  }, {
+    "categoryId": 24,
+    "categoryName": "电子"
+  }, {
+    "categoryId": 27,
+    "categoryName": "古典"
+  }, {
+    "categoryId": 18,
+    "categoryName": "乡村"
+  }, {
+    "categoryId": 22,
+    "categoryName": "蓝调"
+  }, {
+    "categoryId": 21,
+    "categoryName": "爵士"
+  }, {
+    "categoryId": 164,
+    "categoryName": "新世纪"
+  }, {
+    "categoryId": 25,
+    "categoryName": "拉丁"
+  }, {
+    "categoryId": 218,
+    "categoryName": "后摇"
+  }, {
+    "categoryId": 219,
+    "categoryName": "中国传统"
+  }, {
+    "categoryId": 220,
+    "categoryName": "世界音乐"
+  }]
+}, {
+  "categoryGroupName": "主题",
+  "items": [{
+    "categoryId": 39,
+    "categoryName": "ACG"
+  }, {
+    "categoryId": 136,
+    "categoryName": "经典"
+  }, {
+    "categoryId": 146,
+    "categoryName": "网络歌曲"
+  }, {
+    "categoryId": 133,
+    "categoryName": "影视"
+  }, {
+    "categoryId": 141,
+    "categoryName": "KTV热歌"
+  }, {
+    "categoryId": 131,
+    "categoryName": "儿歌"
+  }, {
+    "categoryId": 145,
+    "categoryName": "中国风"
+  }, {
+    "categoryId": 194,
+    "categoryName": "古风"
+  }, {
+    "categoryId": 148,
+    "categoryName": "情歌"
+  }, {
+    "categoryId": 196,
+    "categoryName": "城市"
+  }, {
+    "categoryId": 197,
+    "categoryName": "现场音乐"
+  }, {
+    "categoryId": 199,
+    "categoryName": "背景音乐"
+  }, {
+    "categoryId": 200,
+    "categoryName": "佛教音乐"
+  }, {
+    "categoryId": 201,
+    "categoryName": "UP主"
+  }, {
+    "categoryId": 202,
+    "categoryName": "乐器"
+  }, {
+    "categoryId": 14,
+    "categoryName": "DJ"
+  }]
+}, {
+  "categoryGroupName": "心情",
+  "items": [{
+    "categoryId": 52,
+    "categoryName": "伤感"
+  }, {
+    "categoryId": 122,
+    "categoryName": "安静"
+  }, {
+    "categoryId": 117,
+    "categoryName": "快乐"
+  }, {
+    "categoryId": 116,
+    "categoryName": "治愈"
+  }, {
+    "categoryId": 125,
+    "categoryName": "励志"
+  }, {
+    "categoryId": 59,
+    "categoryName": "甜蜜"
+  }, {
+    "categoryId": 55,
+    "categoryName": "寂寞"
+  }, {
+    "categoryId": 126,
+    "categoryName": "宣泄"
+  }, {
+    "categoryId": 68,
+    "categoryName": "思念"
+  }]
+}, {
+  "categoryGroupName": "场景",
+  "items": [{
+    "categoryId": 78,
+    "categoryName": "睡前"
+  }, {
+    "categoryId": 102,
+    "categoryName": "夜店"
+  }, {
+    "categoryId": 101,
+    "categoryName": "学习"
+  }, {
+    "categoryId": 99,
+    "categoryName": "运动"
+  }, {
+    "categoryId": 85,
+    "categoryName": "开车"
+  }, {
+    "categoryId": 76,
+    "categoryName": "约会"
+  }, {
+    "categoryId": 94,
+    "categoryName": "工作"
+  }, {
+    "categoryId": 81,
+    "categoryName": "旅行"
+  }, {
+    "categoryId": 103,
+    "categoryName": "派对"
+  }, {
+    "categoryId": 222,
+    "categoryName": "婚礼"
+  }, {
+    "categoryId": 223,
+    "categoryName": "咖啡馆"
+  }, {
+    "categoryId": 224,
+    "categoryName": "跳舞"
+  }, {
+    "categoryId": 16,
+    "categoryName": "校园"
+  }]
+}]
