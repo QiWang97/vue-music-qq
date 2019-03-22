@@ -30,14 +30,10 @@ yarn run test
 yarn run lint
 ```
 
-### Customize configuration
-
 ### Info
 
-使用了[]:(https://github.com/904790204/vue-touch) 的触摸指令
-v-tap="(e)=>vueTouch('点击',e)"
-v-longtap="(e)=>vueTouch('长按',e)"
-v-swipeleft="(e)=>vueTouch('左滑',e)"
-v-swiperight="(e)=>vueTouch('右滑',e)"
-v-swipeup="(e)=>vueTouch('上滑',e)"
-v-swipedown="(e)=>vueTouch('下滑',e)"
+一个模仿**QQ音乐移动端**的 vue 项目
+数据来自分析 **QQ音乐**网络请求的接口
+接口暴露在源码， 请勿商用！！
+
+>>>>>>> 61f6c9ad0192183d974df00b00444dd1145730ae
