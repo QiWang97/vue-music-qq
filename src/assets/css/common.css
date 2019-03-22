@@ -84,18 +84,14 @@ audio,
 video {
   margin: 0;
   padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
 body {
-  font: 12px/1.5 arial,
-    'pingfang SC',
-    'helvetica neue',
-    arial,
-    'hiragino sans gb',
-    'microsoft yahei ui',
-    'microsoft yahei',
-    simsun,
-    sans-serif;
+  font: 12px/1.5 "hiragino sans gb", arial;
   word-wrap: break-word;
   color: #555;
   background-color: #fff;
@@ -152,6 +148,7 @@ a:focus {
 
 
 img {
+  display: block;
   max-width: 100%;
   border: 0px;
 }
@@ -198,6 +195,13 @@ textarea {
   top: 0px;
   left: 100px;
 }
+/* 添加底部边框 */
+.b-b-1{
+  border-bottom: 1px solid rgba(0, 0, 0, .5)
+}
+.b-t-1{
+   border-top: 1px solid rgba(0, 0, 0, .3)
+}
 
 /* 一行否则出现省略号 */
 .line-clamp1 {
@@ -228,6 +232,11 @@ textarea {
   position: relative;
 }
 
+.block {
+  display: block;
+}
+
+
 .fl {
   float: left;
 }
@@ -238,11 +247,44 @@ textarea {
 
 .flex {
   display: -webkit-box;
+  /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
   display: -moz-box;
-  display: -ms-flexbox;
+  /* Firefox 17- */
   display: -webkit-flex;
+  /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+  display: -moz-flex;
+  /* Firefox 18+ */
+  display: -ms-flexbox;
+  /* IE 10 */
   display: flex;
+  /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
 }
+
+/* 子元素换行显示 */
+.flex-wrap {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* 子元素 列数*/
+.flex-c1 {
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+}
+
+.flex-c2 {
+  -moz-box-flex: 2;
+  -webkit-box-flex: 2;
+  box-flex: 2;
+}
+
+.flex-c3 {
+  -moz-box-flex: 3;
+  -webkit-box-flex: 3;
+  box-flex: 3;
+}
+
 
 .text-center {
   text-align: center;
@@ -564,4 +606,64 @@ textarea {
 
 .bg-gray {
   background-color: #f4f4f4;
+}
+
+/* 子元素垂直居中，注意，需要添加给父元素 v-m-p */
+.v-m-p {
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  -webkit-box-pack: justify;
+  -webkit-box-align: center;
+}
+
+/*单个元素垂直居中 vertical-mid-child*/
+.m-v{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.m-h{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.m-m{
+    position: absolute;
+    left: 50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+}
+
+/* 文本单行显示，文末省略号 single-ellipsis */
+.s-el {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 设定字体大小  */
+h1 {
+  font-size: 20px;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+h4 {
+  font-size: 14px;
+}
+
+h5 {
+  font-size: 12px;
+}
+
+h6 {
+  font-size: 10px;
 }

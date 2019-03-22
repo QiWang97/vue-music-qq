@@ -1,61 +1,69 @@
 <template>
-  <article>
-    <header>
-      <section>
+  <article class='relative'>
+    <header id='top'>
+      <section class='singer-info'>
         <header>
           <img :src="logo"
                alt="">
           <h4>QQ音乐好歌单</h4>
           <span>立即收藏</span>
         </header>
-        <section>
+        <div class='album'>
           <img :src="cdlist.logo"
                alt="">
           <div>
-            <h2>{{cdlist.dissname}}</h2>
-            <h4 class='m-v-xs'><img :src="logo"
+            <h2 class='m-t-xs'>{{cdlist.dissname}}</h2>
+            <h4 class='m-t-xs'><img :src="logo"
                    alt=""> {{cdlist.nickname}}</h4>
-            <h5>播放量： {{cdlist.visitnum | filterNum}}</h5>
+            <h5 class='m-t-xs'>播放量： {{cdlist.visitnum | filterNum}}</h5>
           </div>
-          <footer>
-            <h3 v-show="!isPlay"><i></i>播放全部</h3>
-            <h4 v-show="isPlay">
-              <i></i>
-              {{song.songorig}}
-              <br><span>{{song.songname}}</span>
-              <i></i>
-            </h4>
-          </footer>
-        </section>
+        </div>
+        <footer>
+          <h3 v-show="showPlayAll"
+              @click.stop="addAll"
+              class='m-m'><i class="fa fa-play"
+               aria-hidden="true"></i>播放全部</h3>
+          <h4 v-show="isPlay">
+            <i class="fa "
+               aria-hidden="true"
+               :class="isPlay?'fa-play-circle':'fa-pause-circle'"></i>
+            {{song.songorig}}
+            <br><span>{{song.songname}}</span>
+            <i></i>
+          </h4>
+        </footer>
       </section>
       <img class="cover"
            :src="cdlist.logo"
            alt="">
     </header>
-    <section>
-      <header>
-        <h5>歌单 共（{{cdlist.total_song_num}}）首<span>收藏<i></i></span></h5>
-      </header>
-      <ul>
-        <li v-for="(item, index) in showSongs"
-            :key="index"
-            @click="switchSong(index)">
-          <h4>{{item.songorig}}</h4>
-          <h6>{{item.singer | filterName}} {{item.songname}}</h6>
-        </li>
-      </ul>
-      <footer @click="loadMore">
-        <h5>点击加载更多</h5>
-      </footer>
-    </section>
-    <footer>
-      <h3>歌单简介</h3>
-      <p v-html='cdlist.desc'></p>
-      <img :src="logo"
-           alt="">
-      <h5>QQ音乐</h5>
+    <div id='main'
+         @touchmove.stop='touchmove'
+         @touchstart.stop='touchstart'
+         @touchend.stop='touchend'>
+      <section class='song-info p-h-xl bg-white relative'>
+        <h4>歌单 共（{{cdlist.total_song_num}}）首<span>收藏<i></i></span></h4>
+        <ul>
+          <li v-for="(item, index) in showSongs"
+              :key="index"
+              @click="switchSong(index)">
+            <h3>{{item.songorig||''}}</h3>
+            <h5>{{(item.singer||[]) | filterName}} {{item.songname||''}}</h5>
+          </li>
+        </ul>
+        <footer @click="loadMore">
+          <h4>点击加载更多</h4>
+        </footer>
+      </section>
+      <footer class='m-v-xl info ' >
+        <h2 class='text-center'>歌单简介</h2>
+        <p v-html='cdlist.desc'></p>
+        <img :src="logo"
+             alt="">
+        <h4 class='text-center'>QQ音乐</h4>
 
-    </footer>
+      </footer>
+    </div>
   </article>
 </template>
 
@@ -65,17 +73,23 @@ import API from '@/api'
 export default {
   name: 'SongListPage',
   mounted () {
+    window.addEventListener('scroll', this.handleScroll);
+
     let id = this.$route.params.id
     API.getSongListInfo(id).then(res => {
       this.listLoading = false
       this.cdlist = res.cdlist[0]
     })
   },
+  destroyed () {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
   data () {
     return {
-      listLoading :true,
+      listLoading: true,
       logo: require('@/assets/logo.png'),
       isPlay: false,
+      showPlayAll: true,
       renderIndex: 5,
       cdlist: {
         album_pic_mid: "",
@@ -141,7 +155,9 @@ export default {
         switch: 17413891,
         type: 0,
         vid: "k0013kkrhv3"
-      }
+      },
+      playList: []
+
     }
   },
   computed: {
@@ -158,6 +174,29 @@ export default {
     loadMore (e) {
       if (this.renderIndex > this.cdlist.total_song_num) return
       this.renderIndex += 5
+    }, touchmove (e) {
+      //let top = document.getElementById('top')
+      //console.log(e.changedTouches[0].pageY)
+
+    },
+    touchstart (e) {
+
+    },
+    touchend (e) {
+
+    },
+    handleScroll (e) {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      //  当滚动超过 200 时，实现吸顶效果
+      let top = document.getElementById('top')
+      if (scrollTop > 225) {
+        top.style.transform = 'translateY(-225px)'
+      } else {
+        top.style.transform = `translateY(-${scrollTop}px)`
+      }
+    },
+    addAll () {
+      this.playList = this.cdlist.songlist
     }
   },
   filters: {
@@ -178,153 +217,145 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-article > header {
-  position: relative;
+article {
+  padding-top: 300px;
+}
+.top {
+  z-index: 10;
+}
+#main {
+  z-index: 2;
+}
+#top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: 10;
   .cover {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: -3;
+    z-index: -1;
     width: 100%;
     height: 100%;
     object-fit: cover;
     -webkit-transform: scale(1.1) translateZ(0);
     -webkit-filter: blur(36px);
   }
-  section {
-    background-color: rgba(0, 0, 0, 0.2);
-    color: #fff;
-    header {
-      position: relative;
-      padding: 10px;
-      height: 80px;
-      background-color: rgba(0, 0, 0, 0.5);
-      img {
-        display: block;
-        float: left;
-        width: 60px;
-        height: 60px;
-      }
-      h4 {
-        margin-left: 70px;
-        line-height: 60px;
-        font-size: 16px;
-      }
-      span {
-        display: block;
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        width: 78px;
-        height: 27px;
-        margin-top: -13px;
-        padding: 3px 5px;
-        border: 1px #000 solid;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 14px;
-      }
-    }
-
-    section {
-      padding: 10px;
-      overflow: hidden;
-      & > img {
-        display: block;
-        float: left;
-        width: 125px;
-        height: 125px;
-      }
-      div {
-        margin-left: 130px;
-        height: 125px;
-        padding: 5px;
-        img {
-          width: 24px;
-          height: 24px;
-          border-radius: 100%;
-        }
-      }
-      footer {
-        height: 84px;
-        width: 100%;
-        padding: 10px;
-        overflow: hidden;
-        h3 {
-          width: 170px;
-          padding: 0 20px;
-          margin: 0 auto;
-          text-align: center;
-          font-size: 16px;
-          line-height: 40px;
-          color: #fff;
-          border-radius: 20px;
-          background: #31c27c;
-        }
-        h4 {
-          font-size: 14px;
-          span {
-            font-size: 12px;
-          }
-        }
-      }
-    }
-  }
 }
-article > section {
-  padding: 0 16px;
-  background-color: #fff;
+.singer-info {
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  z-index: 4;
+
   header {
     position: relative;
-    height: 50px;
+    overflow: hidden;
+    height: 80px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0.05rem 0.05rem rgba(0, 0, 0, 0.02);
+    img {
+      float: left;
+      width: 60px;
+      height: 60px;
+      border-radius: 100%;
+    }
+    h3 {
+      margin-left: 70px;
+      line-height: 40px;
+    }
     h5 {
-      line-height: 50px;
-      font-size: 14px;
+      margin-left: 70px;
+      line-height: 20px;
     }
     span {
-      float: right;
-      color: #31c27c;
-    }
-  }
-  li {
-    height: 60px;
-    h4 {
-      font-size: 16px;
-    }
-    h5 {
+      display: block;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      width: 78px;
+      height: 27px;
+      margin-top: -13px;
+      padding: 3px 5px;
+      border: 1px rgba(255, 255, 255, 0.3) solid;
+      border-radius: 15px;
+      text-align: center;
       font-size: 14px;
     }
-    h6 {
-      font-size: 12px;
+  }
+  .album {
+    height: 145px;
+    padding: 10px;
+    &>img {
+      float: left;
+      width: 125px;
+      height: 125px;
+    }
+    div {
+      overflow: hidden;
+      margin-left: 130px;
+      height: 125px;
+      padding: 5px;
+    }
+    h4>img{
+      display: inline-block;
+      width: 30px;
     }
   }
   footer {
-    text-align: center;
-    h5 {
-      font-size: 14px;
-      line-height: 30px;
+    position: relative;
+    height: 84px;
+    padding: 10px;
+    transition: all 1s ease-in-out;
+    -webkit-transition: 1s ease-in-out;
+    h3 {
+      width: 170px;
+      padding: 0 20px;
+      text-align: center;
+      line-height: 40px;
+      color: #fff;
+      border-radius: 20px;
+      background: #31c27c;
+      i {
+        display: inline-block;
+        margin-right: 10px;
+      }
+    }
+    span {
+      font-size: 12px;
     }
   }
 }
-
-article > footer {
-  padding: 0 16px;
-  text-align: center;
-  margin-top: 15px;
-  h3 {
-    font-size: 18px;
+.song-info {
+  h4 {
     line-height: 50px;
   }
-  p {
-    font-size: 14px;
-    text-align: justify;
+  span {
+    float: right;
+    color: #31c27c;
   }
-  img {
-    display: inline-block;
-    margin-top: 10px;
-    width: 25px;
-    height: 25px;
-    border-radius: 100%;
+
+  li {
+    height: 60px;
   }
+  footer {
+    text-align: center;
+    line-height: 30px;
+  }
+}
+
+.info p{  
+  padding: 15px;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: justify;
+}
+.info img{
+  width: 25px;
+  height: 25px;
+  margin: 0 auto;
 }
 </style>

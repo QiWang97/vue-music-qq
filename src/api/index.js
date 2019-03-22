@@ -1,5 +1,6 @@
 /* jshint esversion: 9 */
 import Base64 from './base64'
+import { string } from 'postcss-selector-parser';
 const axios = require('axios')
 const parseString = require('xml2js').parseString
 const path = require('path')
@@ -380,17 +381,17 @@ function getRadios() {
       .catch(e => console.log(e))
   })
 }
-// 电台对应歌单
-function getRadioList(radioId) {
+// 电台对应歌单 flag = true 为歌单 false为推荐歌曲，
+function getRadioList(radioId,num=10,flag = true) {
   return new Promise((resolve, reject) => {
     let data = {
       songlist: {
-        module: 'pf.radiosvr',
-        method: 'GetRadiosonglist',
+        module: flag ? 'pf.radiosvr' :'mb_track_radio_svr',
+        method: flag ? 'GetRadiosonglist' :'get_radio_track',
         param: {
           id: radioId,
           firstplay: 1,
-          num: 10
+          num
         }
       },
       radiolist: {
@@ -413,7 +414,7 @@ function getRadioList(radioId) {
 
     axios
       .get(
-        'apu/cgi-bin/musicu.fcg?-=getradiosonglist7244422596336129&data=' +
+        'apu/cgi-bin/musicu.fcg?-=getradiosonglist4466302515465168&data=' +
           encodeURIComponent(JSON.stringify(data)),
         {
           params: {
@@ -435,6 +436,7 @@ function getRadioList(radioId) {
       .catch(e => console.log(e))
   })
 }
+
 // 返回 webp 图片文件
 // true 大图 false 小图
 function getAlbumURL(albummId) {
@@ -530,6 +532,70 @@ function getUserInfo(uid) {
   })
 }
 
+// 获取歌曲对应的推荐歌曲、专辑
+// 居然还带有歌词，可怕
+function getSongDetails(songid) {
+  let data = {
+    "comm": {
+      "g_tk": 204697089,
+      "uin": 2396586732,
+      "format": "json",
+      "inCharset": "utf-8",
+      "outCharset": "utf-8",
+      "notice": 0,
+      "platform": "h5",
+      "needNewCode": 1
+    },
+    "detail": {
+      "module": "music.pf_song_detail_svr",
+      "method": "get_song_detail",
+      "param": {
+        "song_id": songid
+      }
+    },
+    "simsongs": {
+      "module": "rcmusic.similarSongRadioServer",
+      "method": "get_simsongs",
+      "param": {
+        "songid": songid
+      }
+    },
+    "gedan": {
+      "module": "music.mb_gedan_recommend_svr",
+      "method": "get_related_gedan",
+      "param": {
+        "sin": 0,
+        "last_id": 0,
+        "song_type": 1,
+        "song_id": songid
+      }
+    },
+    "video": {
+      "module": "MvService.MvInfoProServer",
+      "method": "GetSongRelatedMv",
+      "param": {
+        "songid": String(songid),
+        "songtype": 1,
+        "lastmvid": 0,
+        "num": 5
+      }
+    }
+  }
+  return axios({
+    url: 'apu/cgi-bin/musicu.fcg?_=1553222634146',
+    method:'post',
+    data:JSON.stringify(data),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+  }).then(res=>{
+    return res.data
+  }).catch(e=>{
+    console.log('\n推荐信息获取失败:\n')
+    console.log(e)
+  })
+}
+
 export default {
   getSongUrlResource,
   getSongLyricResource,
@@ -550,5 +616,6 @@ export default {
   getSongLists,
   getSongListInfo,
   getUserInfo,
-  searchAlbums
+  searchAlbums,
+  getSongDetails
 }

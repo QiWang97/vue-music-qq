@@ -1,27 +1,22 @@
 <template>
-  <div class="p-h-sm">
-    <div class="p-v-sm">
-      <h2>热门歌单<span>更多</span></h2>
-    </div>
-    <div>
-      <ul>
-        <li v-for="(item,index) in list"
-            :key="index">
-          <div class="item-main"
-               @click="toInfo(item.id)">
-            <div class="item-body relative">
-              <img :src='item.picUrl'
-                   alt=''>
-              <span></span>
-            </div>
-            <div class="bg-white p-l-xs p-b-xs item-footer">
-              <h4>{{item.songListDesc}}</h4>
-              <h5>{{item.songListAuthor}}</h5>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
+  <div class="p-l-sm">
+    <h2 class="p-v-sm">热门歌单<span>更多</span></h2>
+    <ul class='flex flex-wrap'>
+      <li v-for="(item,index) in list"
+          class="block p-r-sm p-b-sm"
+          @click="toInfo(item.id)"
+          :key="index">
+        <div class="relative">
+          <img :src='item.picUrl'
+               alt=''>
+          <span></span>
+        </div>
+        <div class="bg-white p-h-xs p-v-xs">
+          <h4 class='s-el'>{{item.songListDesc}}</h4>
+          <h5>{{item.songListAuthor}}</h5>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -46,10 +41,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-h2 span {
+h2 > span {
   float: right;
   font-size: 14px;
-  margin-right: 10px;
+  margin-right: 20px;
+
   &::after {
     content: "";
     display: inline-block;
@@ -62,41 +58,27 @@ h2 span {
 }
 
 li {
-  display: block;
-  float: left;
   width: 50%;
-  padding-right: 8px;
-  margin-bottom: 10px;
-}
-.item-main {
-  width: 100%;
   img {
-    display: block;
     width: 100%;
   }
   span {
     display: block;
     position: absolute;
-    right: 5px;
-    bottom: 5px;
-    height: 24px;
-    width: 24px;
+    right: 0.375rem;
+    bottom: 0.375rem;
+    height: 1.5rem;
+    width: 1.5rem;
     background-image: url("../../assets/list_sprite.png");
     background-repeat: no-repeat;
     background-position: 0 0;
-    background-size: 24px 60px;
+    background-size: 1.5rem 3.75rem;
   }
-  .item-footer {
-    height: 40px;
-    h5 {
-      font-size: 12px;
-    }
-    h4 {
-      font-size: 14px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+  & > div:first-child {
+    width: 100%;
+  }
+  & > div:last-child {
+    height: 3rem;
   }
 }
 </style>

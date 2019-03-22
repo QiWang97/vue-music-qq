@@ -1,8 +1,9 @@
 <template>
   <div class="">
-    <div class="slide">
-      <img :src="picUrl"
-           alt="">
+    <div id='slider'
+         class="slider">
+        <img :src="picUrl"
+             alt="">
     </div>
     <radio-card></radio-card>
     <list-card :list='songList'></list-card>
@@ -22,29 +23,43 @@ export default {
   },
   mounted () {
     API.getHomePageInfo().then(res => {
-      this.loading = false      
+      this.loading = false
       this.slider = res.data.slider
       this.songList = res.data.songList
-    })  
+    })
+
+    this.winWidth = window.innerWidth || document.body.clientWidth || 375
+    this.imgHeight = this.winWidth / 2.5
+
   },
   data () {
     return {
-      currentIndex: 0,
       loading: true,
-      slider: [{
+      songList: [],
+
+      currentIndex: 0,// 轮播图索引      
+      slider: [{           // 轮播图图片
         id: 0,
         linkUrl: "",
         picUrl: ''      }],
-      songList: []
+      winWidth: 375,  // 窗口宽度
+      imgHeight: 150  // 图片高度 2.5倍
+
     }
   },
   computed: {
     picUrl () {
       return this.slider[this.currentIndex].picUrl || ''
     }
+  },
+  methods: {
   }
 }
 </script>
 
-<style lang="" scoped>
+<style lang="scss" scoped>
+.slider {
+  padding-top: 1px;
+  background-color: #fff;
+}
 </style>

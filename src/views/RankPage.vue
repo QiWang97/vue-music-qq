@@ -4,31 +4,29 @@
       <li v-for="(item, index) in rankList"
           :key="index"
           @click="toRank(item.topID,item.update_key,item.pic,item.ListName)">
-        <div class='rank-main'>
-          <div class='rank-album'><img :src="item.pic"
-                 alt="">
-          </div>
-          <div class='rank-info'>
-            <h3>{{item.GroupName}}</h3>
-            <h4 v-for="(item0, index0) in item.songlist"
-                :key="index0">{{index0 + 1}} {{item0.songname}} - {{item0.singername}}</h4>
-          </div>
-          <i></i>
+        <img :src="item.pic"
+             alt="">
+        <div>
+          <h3>{{item.ListName}}</h3>
+          <h4 v-for="(item0, index0) in item.songlist" class="s-el"
+              :key="index0">{{item0.songname? (index0 + 1):''}} {{item0.songname}} <span>{{item0.singername}}</span></h4>
         </div>
+        <i></i>
       </li>
     </ul>
 
   </div>
 </template>
 
+
 <script>
 import API from '@/api'
 export default {
   name: '',
-  mounted () {   
+  mounted () {
     API.topList().then(res => {
-      this.loading = false  
-      let arr = [...res[0].List,...res[1].List]  
+      this.loading = false
+      let arr = [...res[0].List, ...res[1].List]
 
       this.rankList = arr
     })
@@ -40,7 +38,7 @@ export default {
         ListName: "",
         MacDetailPicUrl: "",
         MacListPicUrl: "",
-        headPic_v12:"",
+        headPic_v12: "",
         listennum: 0,
         pic: "",
         pic_Detail: "",
@@ -57,41 +55,37 @@ export default {
     }
   },
   computed: {
-   
+
   },
   methods: {
-    toRank (topID,update_key,pic,ListName) {
-      this.$router.push({ path: 'rankList', query: {topID,pic,ListName,update_key} })
+    toRank (topID, update_key, pic, ListName) {
+      this.$router.push({ path: 'rankList', query: { topID, pic, ListName, update_key } })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.rank-main {
+li {
   height: 100px;
   margin-top: 10px;
   background-color: #fff;
   position: relative;
   overflow: hidden;
 
-  .rank-album {
+  img {
     float: left;
     width: 100px;
     height: 100px;
   }
-  .rank-info {
+  div {
     margin-left: 110px;
     padding: 5px 0 5px 15px;
-    h3 {
-      font-size: 16px;
-      line-height: 18px;
+    h3{
+      color:#000;
     }
-    h4 {
-      font-size: 14px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    h4>span{
+      color:rgba(0,0,0,.6);
     }
   }
   i {

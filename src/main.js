@@ -2,8 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import '@/icons'
+
 import '@/assets/css/common.css'
+import '@/assets/css/font-awesome/css/font-awesome.min.css'
 
 Vue.config.productionTip = false
 

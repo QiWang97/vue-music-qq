@@ -1,26 +1,20 @@
 <template>
-  <div class="p-h-sm">
-    <div class="p-v-sm">
-      <h2>电台</h2>
-    </div>
-    <div>
-      <ul v-if="!loading">
-        <li v-for="(item,index) in showList"
-            :key="index">
-          <div class="item-main"
-               @click="toInfo(item.radioId)">
-            <div class="item-body relative">
-              <img :src='item.radioImg'
-                   alt=''>
-              <span></span>
-            </div>
-            <div class="bg-white p-l-xs p-b-xs item-footer">
-              <h4>{{item.radioName}}</h4>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
+  <div class="p-l-sm">
+    <h2 class="p-v-sm">电台</h2>
+    <ul v-if="!loading"
+        class='flex flex-wrap'>
+      <li v-for="(item,index) in showList"
+          :key="index"
+          class="block p-r-sm p-b-sm"
+          @click="toInfo(item.radioId)">
+        <div class="relative">
+          <img :src='item.radioImg'
+               alt=''>
+          <span></span>
+        </div>
+        <h4 class="p-l-xs p-b-xs bg-white">{{item.radioName}}</h4>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -31,8 +25,8 @@ export default {
   mounted () {
     let _that = this
     API.getRadios().then(res => {
-        _that.radioList = res.data.groupList
-        _that.loading = false
+      _that.radioList = res.data.groupList
+      _that.loading = false
     })
   },
   data () {
@@ -56,38 +50,27 @@ export default {
 </script>
 <style lang="scss" scoped>
 li {
-  display: block;
-  float: left;
   width: 50%;
-  padding-right: 8px;
-  margin-bottom: 10px;
-}
-.item-main {
-  width: 100%;
+  & > div {
+    width: 100%;
+  }
   img {
-    display: block;
     width: 100%;
   }
   span {
     display: block;
     position: absolute;
-    right: 5px;
-    bottom: 5px;
-    height: 24px;
-    width: 24px;
+    right: 0.375rem;
+    bottom: 0.375rem;
+    height: 1.5rem;
+    width: 1.5rem;
     background-image: url("../../assets/list_sprite.png");
     background-repeat: no-repeat;
     background-position: 0 0;
-    background-size: 24px 60px;
+    background-size: 1.5rem 3.75rem;
   }
-  .item-footer {
-    height: 40px;
-    h5 {
-      font-size: 12px;
-    }
-    h4 {
-      font-size: 14px;
-    }
+  h4 {
+    line-height: 2.5rem;
   }
 }
 </style>

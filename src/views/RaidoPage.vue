@@ -1,132 +1,162 @@
 <template>
-  <article @click="toggleSongList(1)">
-    <header v-if='!radioLoading'>
-      <img :src="singerAlbum"
-           alt="">
-      <div class='fl m-l-xl'>
-        <h3>{{song.singer|filterSingername}}</h3>
-        <h4>更多好音乐</h4>
-      </div>
-      <span>立即收听</span>
-    </header>
-    <section class=info
-             v-if='!radioLoading'>
-      <header class='m-v-lg'>
-        <h2>{{song.name}} <i @click.stop="toggleSongList(0)"></i> </h2>
-        <h4>{{song.singer|filterSingername}}</h4>
-      </header>
-      <div @click="toggleAlbum"
-           class="info-main">
-        <div class="info-lyric"
-             v-show='!showAlbum'>
-          <h4 clas='h14'>查看完整歌词<i></i></h4>
-        </div>
-        <img :src="album"
-             alt=""
-             v-show='showAlbum'>
-      </div>
-      <footer>
-        <div class='info-btn'>
-          <i></i>
-          <i class='info-btn-mid'></i>
-          <i></i>
-        </div>
-        <div class='download'>下载歌曲</div>
-      </footer>
-    </section>
-    <section class="likeSong p-h-sm m-t-lg">
-      <h3>猜你喜欢</h3>
-      <ul>
-        <li v-for="(item, index) in likeSongs"
-            :key="index">
-          <img :src="item.album"
-               alt="">
-          <div class='fl p-sm'>
-            <h4>{{item.name}}</h4>
-            <h5>{{item.singer}}</h5>
-          </div>
-          <i></i>
-        </li>
-      </ul>
-    </section>
-    <section class="likeRadio p-h-sm">
-      <h3>大家都在听</h3>
-      <ul>
-        <li v-for="(item, index) in likeRadios"
-            :key="index">
-          <img :src="item.album"
-               alt="">
-          <div>
-            <h4>{{item.name}}</h4>
-            <h5>{{item.user}}</h5>
-          </div>
-        </li>
-      </ul>
-    </section>
-    <section class="special p-h-sm">
-      <h3>歌手与专辑</h3>
-      <div class="special-item">
-        <img :src="special.singericon"
-             alt="">
+  <article @click="toggleSongList(1)"
+           class="">
+    <!-- 头部固定 -->
 
-        <h4>歌手 {{special.singer}}</h4>
-        <i></i>
-      </div>
-      <div class="special-item">
-        <img :src="special.album"
+    <header class='top'
+            v-if='!radioLoading'>
+      <div>
+        <img :src="singerAlbum"
              alt="">
-        <h4>专辑 {{special.albumName}}</h4>
-        <i></i>
+        <div class='fl m-l-xl'>
+          <h3>{{song.singer[0].name||''}}</h3>
+          <h4>更多好音乐</h4>
+        </div>
+        <span>立即收听</span>
       </div>
-    </section>
-    <section class="comment p-h-sm">
-      <h3>精彩评论</h3>
-      <ul>
-        <li v-for="(item, index) in hotCommentList"
-            :key="index">
-          <aside><img :src="item.avatarurl"
-                 alt=""></aside>
-          <div>
-            <h4>{{item.rootcommentnick}}</h4>
-            <h6>{{item.time}}</h6>
-            <p>{{item.rootcommentcontent}}</p>
-            <span>{{item.praisenum}} <i></i> </span>
+    </header>
+    <!-- 头部固定 结束 -->
+    <!-- 主界面 -->
+    <div class="main relative">
+
+      <!-- 歌词部分 -->
+      <div class="pos">
+        <section class='info text-center block relative'
+                 v-if='!radioLoading'>
+          <header class='m-v-lg'>
+            <h1>
+              {{song.name}}
+              <i class="fa fa-list-ul"
+                 aria-hidden="true"
+                 @click.stop="toggleSongList(0)"></i>
+            </h1>
+            <h4>{{song.singer[0].name||''}}</h4>
+          </header>
+          <div class="info-main">
+            <div class="info-lyric"
+                 v-show='!showAlbum'>
+              <h4 clas='h14'>查看完整歌词<i></i></h4>
+            </div>
+            <div class='imfo-img'
+                 @click.stop="toggleAlbum">
+              <img :src="album"
+                   alt=""
+                   v-show='showAlbum'>
+            </div>
           </div>
-        </li>
-      </ul>
-      <div class='commont-more'
-           @click='showComment'>查看更多评论</div>
-    </section>
-    <section class="mv p-h-sm"
-             v-if="false">
-      <h3>推荐音乐视频</h3>
-      <ul>
-        <li v-for="(item, index) in mvs"
-            :key="index">
-          <!-- <video src=""></video> -->
-          <img :src="item.img"
+          <footer>
+            <div class='info-btn flex'>
+              <i class="fa fa-step-backward"
+                 aria-hidden="true"></i>
+              <i :class="isPlay?'fa fa-pause':'fa fa-play'"
+                 aria-hidden="true"></i>
+              <i class="fa fa-step-forward"
+                 aria-hidden="true"></i>
+            </div>
+            <div class='download'>下载歌曲</div>
+          </footer>
+        </section>
+        <div class='bg-img'>
+          <img :src="album"
                alt="">
-          <h4>{{item.name}}</h4>
-          <h5>{{item.singer}}</h5>
-          <span></span>
-        </li>
-      </ul>
-    </section>
+        </div>
+      </div>
+
+      <!-- 歌词部分 结束-->
+      <!-- 推荐歌曲 -->
+      <section class="likeSong p-h-sm m-t-lg">
+        <h3>猜你喜欢</h3>
+        <ul>
+          <li v-for="(item, index) in likeSongs"
+              :key="index">
+            <img :src="item.album.url||''"
+                 alt="">
+            <div class='fl p-sm'>
+              <h4>{{item.name}}</h4>
+              <h5>{{item.singer[0].name||''}}</h5>
+            </div>
+            <i></i>
+          </li>
+        </ul>
+      </section>
+      <!-- 推荐歌曲 结束-->
+      <!-- 推荐歌手专辑 -->
+      <section class="detail p-h-sm">
+        <h3>歌手与专辑</h3>
+        <div class="detail-item">
+          <img :src="singerAlbum"
+               alt="">
+
+          <h4>歌手 {{song.singer[0].name||''}}</h4>
+          <i></i>
+        </div>
+        <div class="detail-item">
+          <img :src="detail.albumUrl"
+               alt="">
+          <h4>专辑 {{detail.name}}</h4>
+          <i></i>
+        </div>
+      </section>
+      <!-- 推荐歌手专辑 结束-->
+      <!-- 热评 -->
+      <section class="comment p-h-sm">
+        <h3>精彩评论</h3>
+        <ul>
+          <li v-for="(item, index) in hotCommentList"
+              :key="index">
+            <aside><img :src="item.avatarurl"
+                   alt=""></aside>
+            <div>
+              <h4>{{item.rootcommentnick}}</h4>
+              <h6>{{item.time}}</h6>
+              <p>{{item.rootcommentcontent}}</p>
+              <span>{{item.praisenum}} <i class="fa fa-thumbs-o-up"
+                   aria-hidden="true"></i> </span>
+            </div>
+          </li>
+        </ul>
+        <div class='commont-more'
+             @click='showComment'>查看更多评论</div>
+      </section>
+      <!-- 热评 结束 -->
+      <!-- 推荐mv -->
+      <section class="mv p-h-sm">
+        <h3>推荐音乐视频</h3>
+        <ul>
+          <li v-for="(item, index) in likeMvs"
+              :key="index">
+            <!-- <video src=""></video> -->
+            <img :src="item.picurl"
+                 alt="">
+            <h4>{{item.subtitle||''}}</h4>
+            <h5>{{item.singers[0].name||''}}</h5>
+            <span></span>
+          </li>
+        </ul>
+      </section>
+      <!-- 推荐mv 结束-->
+
+    </div>
+    <!-- 主界面  结束-->
+    <!-- 上拉歌曲列表 -->
     <section class='songList'
              v-show="showSongList">
       <header>
         <h4>播放队列（{{songList.length}}）首</h4>
       </header>
-      <ul>
-        <li v-for="(item, index) in songList"
-            :key="index"
-            @click.stop="switchSong(index)">
-          <span :class=' {focus:item.id==song.id}'>{{item.name}}</span>
-          <span :class=' {focus:item.id==song.id}'> - {{item.singer|filterSingername}}</span>
-        </li>
-      </ul>
+      <div class='relative' @click.stop="">
+        <ul id='list'>
+          <li v-for="(item, index) in songList"
+              :key="index"
+              @click.stop="switchSong(index)">
+            <span :class=' {focus:item.id==song.id}'>{{item.name}}</span>
+            <span :class=' {focus:item.id==song.id}'> - {{item.singer[0].name||''}}</span>
+          </li>
+        </ul>
+      </div>
 
     </section>
+    <!-- 上拉歌曲列表 结束 -->
   </article>
 </template>
 
@@ -136,66 +166,69 @@ import API from '@/api'
 export default {
   name: 'RaidoPage',
   mounted () {
+    // 注入cookie，获取电台歌单的额必要操作
     let expireDays = 1000 * 60 * 60;
     for (let key in radioCookies) {
       setCookie(key, radioCookies[key], expireDays)
     }
-    API.getRadioList(parseInt(this.$route.query.radioId))
+    // 获取歌单，导入歌单信息
+    let radioId = parseInt(this.$route.query.radioId)
+    API.getRadioList(radioId)
       .then(res => {
-        this.radioLoading = false
-        this.raidoList = res.radiolist.data.radio_list
-        this.songList = res.songlist.data.track_list
-        this.raidoListTitle = res.radiolist.data.raidoListTitle
-        this.songListId = res.songlist.data.id
-        this.song = this.songList[0]
+        this.radioLoading = false   // 表示歌单加载完成
+        this.raidoList = res.radiolist.data.radio_list || []  // 电台频道列表
+        this.songList = res.songlist.data.track_list || []  //  电台歌单
+        this.songListId = res.songlist.data.id || 0   // 电台频道 id
+        this.song = this.songList[0] || {}   // 加载完成自动设置歌曲信息，但是不自动播放
+
         this.getComment(this.song.id, 10, 0)
+        this.getSongDetails(this.song.id)
+
       })
+
+
   },
   data () {
     return {
-      radioLoading: true,
-      showSongList: false,
-      showAlbum: false,
-      currentCommentIndex: 1,
+      radioLoading: true,   // true 表示电台信息正在加载
+      showSongList: false,  // false 表示不展示歌曲列表
+      showAlbum: false,    // false 表示不展示歌曲封面
+      currentCommentIndex: 1,  // 当前展示的评论序号
+      isPlay: false,    // 是否在播放
 
-      raidoList: [],
-      raidoListTitle: '',
-      songList: [],
-      songListId: 0,
-      song: {},
-      comment: {},
-      hot_comment: {},
+      songListId: 0,                // 该歌单id ，用于查评论
+      song: { singer: [{ name: '' }], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' },    // 正在播放的歌曲
+      playList: [],     // 播放列表
+      lyric: '',   // 歌词信息
 
-      likeSongs: [{
-        name: '我的骄傲', singer: '容祖儿', album: require('@/assets/track_radio_199_13_1.jpg'), url: ''      },
-      { name: '我的骄傲', singer: '容祖儿', album: require('@/assets/track_radio_199_13_1.jpg'), url: '' },
-      { name: '我的骄傲', singer: '容祖儿', album: require('@/assets/track_radio_199_13_1.jpg'), url: '' }],
-      likeRadios: [{
-        name: '编辑推荐', album: require('@/assets/track_radio_199_13_1.jpg'), user: 'QQ官方歌单'      },
-      { name: '编辑推荐', album: require('@/assets/track_radio_199_13_1.jpg'), user: 'QQ官方歌单' },
-      { name: '编辑推荐', album: require('@/assets/track_radio_199_13_1.jpg'), user: 'QQ官方歌单' }],
-      special: {
-        singer: '陈奕迅',
-        singerInfo: '',
-        singericon: require('@/assets/track_radio_199_13_1.jpg'),
-        albumName: '打得火热',
-        album: require('@/assets/track_radio_199_13_1.jpg')
+      raidoList: [],     // 电台的频道列表
+      songList: [{ singer: [{ name: '' }], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' }],    // 电台歌单歌曲列表
+      likeSongs: [{ singer: [{ name: '' }], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' }],   // 推荐歌曲    
+      comment: {},   // 评论
+      hot_comment: {},  //热评    
+      likeMvs: [{ mvid: 0, picurl: "", playcnt: 0, singers: [{ name: '' }], title: "", vid: "" }],    //推荐MV
+      detail: {       // 歌手和专辑信息
+        name: "",
+        subtitle: "",
+        albumUrl: '',
+        info: [],
+        track_info: {}
       }
     }
   },
   computed: {
-    album () {
+    album () {     // 指定歌曲封面
       let mid = this.song.album.mid || ''
       return API.getAlbumURL(mid)
     },
-    singerAlbum () {
+    singerAlbum () {   // 指定歌手封面
       let mid = this.song.singer[0].mid || ''
       return API.getSingerAlbumURL(mid)
     },
-    commentList () {
+    commentList () { // 评论列表
       return this.comment.commenttotal > 0 ? this.comment.commentlist : []
     },
-    hotCommentList () {
+    hotCommentList () { // 热评列表
       return this.hot_comment.commenttotal > 0 ? this.hot_comment.commentlist : []
     }
 
@@ -204,100 +237,128 @@ export default {
     toggleSongList (flag) {
       this.showSongList = flag == 1 ? false : !this.showSongList
     },
-    toggleAlbum () {
+    toggleAlbum (e) { // 点击切换展示封面状态
       this.showAlbum = !this.showAlbum
     },
-    showComment () {
+    showComment () {  // 加载更多评论
       let total = this.hotCommentList.length
       if (this.currentCommentIndex > total) return
       this.currentCommentIndex += 5
     },
-    switchSong (index) {
+    switchSong (index) {  // 切换歌曲
       this.song = this.songList[index]
       this.getComment(this.song.id, 10, 0)
+      this.getSongDetails(this.song.id)
+
     },
-    getComment (id, page, num) {
+    getComment (id, page, num) {  // 获取评论
       API.getSongComment(id, page, num).then(res => {
-       this.comment = res.data.comment
+        this.comment = res.data.comment
         this.hot_comment = res.data.hot_comment
+      })
+    },
+    getSongDetails (songid) {  // 切换歌曲后，可以直接使用这个函数加载歌曲信息
+      API.getSongDetails(songid).then(res => {
+        let lylist = res.detail.data.info
+        lylist.forEach((item, index, arr) => {
+          if (item.type.includes("lyric")) {
+            this.lyric = lylist[index].content[0] || ''
+          }
+        })
+
+        this.detail = {
+          name: res.detail.data.extras.name || '',
+          subtitle: res.detail.data.extras.subtitle || '',
+          info: res.detail.data.info || {},
+          track_info: res.detail.data.track_info || {},
+          albumUrl: API.getAlbumURL(res.detail.data.track_info.album.mid) || ''
+        }
+        let list = res.simsongs.data.songInfoList || []
+        try {
+          list.forEach((item, index, arr) => {
+            item.album.url = API.getAlbumURL(item.album.mid) || ''
+          })
+        } catch (e) {
+          throw '推荐歌曲信息图片处理失败'
+        } finally {
+          this.likeSongs = list || []
+        }
+        this.likeMvs = res.video.data.list || []
       })
     }
 
-  },
-  filters: {
-    filterSingername (arr) {
-      let name = ''
-      arr.forEach(el => {
-        if (el.name) {
-          name = name + el.name + ' '
-        }
-      });
-      return name
-    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-article > header {
+.top {
   position: fixed;
+  overflow: hidden;
   top: 0;
   left: 0;
-  $height: 80px;
-  height: 80px;
-  width: 100%;
+  right: 0;
+  height: 5rem;
   background-color: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  $padding: 10px;
-  padding: 10px;
-  z-index: 999;
+  z-index: 2;
+}
+.top > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.625rem;
   h3 {
-    font-size: 16px;
-    line-height: 24px;
+    line-height: 1.875rem;
   }
   h4 {
-    font-size: 14px;
-    line-height: 20px;
+    line-height: 1.25rem;
+    color: rgba(0, 0, 0, 0.3);
   }
   img {
     display: block;
-    width: 60px;
-    height: 60px;
+    width: 3.75rem;
+    height: 3.75rem;
     float: left;
     border-radius: 100%;
   }
   span {
     display: block;
     position: absolute;
-    top: $height/2 - 13px;
-    right: $padding;
-    width: 75px;
-    height: 27px;
-    border: 1px #000 solid;
-    border-radius: 15px;
+    top: 50%;
+    right: 5rem;
+    width: 4.75rem;
+    height: 1.75rem;
+    margin-top: -0.75rem;
+    padding: 0 5px;
+    border: 1px rgba(0, 0, 0, 0.3) solid;
+    border-radius: 0.875rem;
     text-align: center;
     font-size: 14px;
+    line-height: 1.625rem;
   }
 }
 .info {
-  padding-top: 80px;
-  text-align: center;
+  margin-top: 5rem;
+
   h2 {
-    line-height: 28px;
-    font-size: 20px;
+    line-height: 1.75rem;
     i {
       display: inline-block;
-      width: 15px;
-      height: 15px;
-      background-color: #000;
+      width: 0.94rem;
+      height: 0.94rem;
+      margin-left: 0.625rem;
     }
   }
   .info-main {
     position: relative;
-    height: 235px;
+    overflow: hidden;
+    height: 15rem;
     width: 100%;
 
     .info-lyric {
+      overflow: hidden;
       h4 {
         position: absolute;
         bottom: 0;
@@ -305,58 +366,71 @@ article > header {
       }
       i {
         display: inline-block;
-        width: 10px;
-        height: 10px;
+        width: 0.625rem;
+        height: 0.625rem;
         border-right: 1px solid #b2b2b2;
         border-bottom: 1px solid #b2b2b2;
         -webkit-transform: rotate(-45deg);
       }
     }
-    img {
-      display: block;
-      height: 235px;
-      height: 235px;
+    .imfo-img {
+      width: 15rem;
+      height: 15rem;
       margin: 0 auto;
+      cursor: pointer;
     }
   }
   footer {
     .info-btn {
-      height: 90px;
-      padding: 25px 0;
+      height: 5.625rem;
+      padding: 1.55rem 0;
+      justify-content: center;
       i {
         display: inline-block;
-        background-color: #000;
-        width: 30px;
-        height: 30px;
-      }
-      .info-btn-mid {
-        margin: 0 30px;
+        margin-left: 2rem;
+        font-size: 2.19rem;
       }
     }
     .download {
+      position: relative;
+      top: 100%;
       width: 60%;
       margin: 0 auto;
-      line-height: 40px;
+      line-height: 2.5rem;
       font-size: 20px;
       background-color: #31c27c;
       color: #fff;
-      border-radius: 20px;
+      border-radius: 1.25rem;
     }
   }
 }
+.bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+    opacity: 0.06;
+    -webkit-transform: scale(1.2);
+    pointer-events: none;
+  }
+}
 section {
+  overflow: hidden;
   h3 {
-    line-height: 55px;
-    font-size: 16px;
+    margin-top: 10px;
+    line-height: 3.5rem;
     text-align: center;
   }
   h4 {
-    font-size: 14px;
-    line-height: 20px;
+    line-height: 1.25rem;
   }
   h5 {
-    font-size: 12px;
-    line-height: 16px;
+    line-height: 1rem;
   }
 }
 
@@ -364,21 +438,21 @@ section {
   li {
     position: relative;
     margin-top: 2px;
-    height: 65px;
+    height: 4.1rem;
     border-bottom: #dfdcdc 1px solid;
     img {
       display: block;
       float: left;
-      width: 65px;
-      height: 65px;
+      width: 4.1rem;
+      height: 4.1rem;
     }
     i {
       position: absolute;
       top: 50%;
       right: 3%;
-      width: 10px;
-      height: 10px;
-      margin-top: -4px;
+      width: 0.625rem;
+      height: 0.625rem;
+      margin-top: -0.25rem;
       border-right: 1px solid #b2b2b2;
       border-bottom: 1px solid #b2b2b2;
       -webkit-transform: rotate(-45deg);
@@ -392,35 +466,35 @@ section {
     overflow: hidden;
     text-overflow: ellipsis;
     img {
-      width: 113px;
-      height: 113px;
+      width: 7.1rem;
+      height: 7.1rem;
     }
   }
 }
-.special {
-  .special-item {
+.detail {
+  .detail-item {
     position: relative;
-    height: 65px;
+    height: 4.1rem;
     margin-top: 2px;
     border-bottom: 1px #000 solod;
     h4 {
       display: inline-block;
-      margin-left: 15px;
-      line-height: 65px;
+      margin-left: 1rem;
+      line-height: 4.1rem;
     }
     img {
       float: left;
       display: block;
-      width: 65px;
-      height: 65px;
+      width: 4.1rem;
+      height: 4.1rem;
     }
     i {
       position: absolute;
       top: 50%;
       right: 3%;
-      width: 10px;
-      height: 10px;
-      margin-top: -4px;
+      width: 0.625rem;
+      height: 0.625rem;
+      margin-top: -0.25rem;
       border-right: 1px solid #b2b2b2;
       border-bottom: 1px solid #b2b2b2;
       -webkit-transform: rotate(-45deg);
@@ -431,19 +505,29 @@ section {
   li {
     position: relative;
     overflow: hidden;
+    padding: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
     aside {
       float: left;
-      width: 35px;
+      width: 2.2rem;
       height: 100%;
       img {
-        width: 35px;
-        height: auto;
+        width: 2.2rem;
+        width: 2.2rem;
         border-radius: 100%;
       }
     }
     div {
-      margin-left: 40px;
+      margin-left: 3.75rem;
       position: relative;
+      p {
+        font-size: 14px;
+        overflow: hidden;
+        word-wrap: break-word;
+        word-break: break-all;
+        text-align: justify;
+        line-height: 1.6;
+      }
       span {
         position: absolute;
         display: inline;
@@ -451,36 +535,35 @@ section {
         top: 0;
         i {
           display: inline-block;
-          width: 5px;
-          height: 5px;
-          color: #000;
-          background-color: #000;
+          width: 0.3rem;
+          height: 0.3rem;
         }
       }
     }
   }
   .commont-more {
     width: 60%;
-    margin: 20px auto;
-    line-height: 40px;
-    font-size: 16px;
-    border-radius: 20px;
+    margin: 1.25rem auto;
+    line-height: 2.5rem;
+    font-size: 1rem;
+    border-radius: 1.25rem;
     border: 1px #000 solid;
     text-align: center;
     opacity: 0.5;
   }
 }
 .mv {
-  padding: 0 15px 0 15px;
+  padding: 0 0.625rem 2rem 0.625rem;
+  margin-bottom: 1.25rem;
   li {
-    margin-top: 15px;
+    margin-top: 0.625rem;
     position: relative;
     img {
       width: 100%;
-      height: 194px;
+      height: 12.125rem;
     }
     h4 {
-      margin-top: 5px;
+      margin-top: 0.3125rem;
     }
     span {
       display: block;
@@ -490,11 +573,11 @@ section {
       background-image: url("../assets/list_sprite.png");
       background-repeat: no-repeat;
       background-position: 0 0;
-      background-size: 45px 110px;
-      height: 45px;
-      width: 45px;
-      margin-top: -45px;
-      margin-left: -25px;
+      background-size: 2.5rem 6.875rem;
+      height: 2.8125rem;
+      width: 2.8125rem;
+      margin-top: -2.8rem;
+      margin-left: -1.56rem;
     }
   }
 }
@@ -505,26 +588,25 @@ section {
   height: 50%;
   width: 100%;
   background-color: #fff;
-  z-index: 999;
 
   header {
-    height: 55px;
+    height: 3.45rem;
     width: 100%;
     text-align: center;
     border-top: 1px rgba(209, 202, 202, 0.3) solid;
     border-bottom: 1px rgba(209, 202, 202, 0.3) solid;
     h4 {
-      line-height: 55px;
-      font-size: 20px;
+      line-height: 3.45rem;
+      font-size: 1.25rem;
     }
   }
   li {
-    height: 45px;
-    margin-left: 15px;
-    line-height: 45px;
+    height: 2.8rem;
+    margin-left: 1rem;
+    line-height: 3rem;
     border-bottom: 1px rgba(209, 202, 202, 0.3) solid;
     span:first-child {
-      font-size: 16px;
+      font-size: 1rem;
     }
     .focus {
       color: #31c27c;
