@@ -23,29 +23,28 @@ import API from '@/api'
 export default {
   name: 'RadioCard',
   mounted () {
-    let _that = this
     API.getRadios().then(res => {
-      _that.radioList = res.data.groupList
-      _that.loading = false
+      this.radioList = res.data.groupList
+      this.loading = false
     })
   },
   data () {
     return {
-      radioList: [],
+      radioList: [{ radioList: [] }],
       loading: true
     }
   },
   computed: {
     showList () {
       if (this.loading) return;
-      return this.radioList[0].radioList.slice(0, 2)
+      return this.radioList[0].radioList.slice(1, 3)
     }
   },
   methods: {
     toInfo (radioId) {
-      this.$router.push({ path: '/radio',query:{radioId}})
+      this.$router.push({ path: '/radio', query: { radioId } })
     }
-  },
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -64,7 +63,7 @@ li {
     bottom: 0.375rem;
     height: 1.5rem;
     width: 1.5rem;
-    background-image: url("../../assets/list_sprite.png");
+    background-image: url("../../assets/img/list_sprite.png");
     background-repeat: no-repeat;
     background-position: 0 0;
     background-size: 1.5rem 3.75rem;

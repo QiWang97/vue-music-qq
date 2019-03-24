@@ -44,10 +44,7 @@
            alt="">
     </header>
 
-    <div id='main'
-         @touchmove.stop='touchmove'
-         @touchstart.stop='touchstart'
-         @touchend.stop='touchend'>
+    <div id='main'>
       <section class='song-info p-h-xl bg-white relative'>
         <h4>歌曲 共（{{singerData.songNum}}）首<span>收藏<i></i></span></h4>
         <ul>
@@ -68,6 +65,7 @@
           <h2 class='text-center'>热门专辑</h2>
           <ul class='flex flex-wrap'>
             <li v-for="(item, index) in singerData.hotalbum"
+                @click="toAlbum(item.albumMID)"
                 :key="index">
               <img :src="'https://y.gtimg.cn/music/photo_new/T002R150x150M000'+item.albumMID+'.jpg?max_age=2592000'"
                    alt="">
@@ -92,35 +90,7 @@ export default {
     window.addEventListener('scroll', this.handleScroll);
 
     let singermid = this.$route.params.singermid || ''
-
-    // 检测本地存储歌手信息
-    let singerData = localStorage.getItem(singermid);
-    if (!singerData) {
-      this.listLoading = true
-      return;
-    }
-    this.listLoading = false
-    singerData = JSON.parse(singerData)
-    //console.log(singerData)
-
-    /* f=  "436088|断桥残雪|7221|许嵩|35485|Vae新歌 精选珍藏合辑|1958988|227|9|1|0|9083510|3633531|0|0|0|0|5642756|5496214|0|004ENQPZ0dHaqy|000CK5xN3yZDJt|001jmC6x1RMfh0|31|0"
-    * info = []
-    */
-    try {
-      singerData.hotsong.forEach((item, index, arr) => {
-        if (item.f) {
-          arr[index].info = item.f.split('|')
-        }
-      })
-    } catch (e) {
-      throw '本地存储歌曲信息读取失败！'
-    }
-
-
-
-    this.singerData = singerData || ''
-    //console.log(this.singerData.singerPic)
-
+    this.init(singermid)
 
     /*     API.getAlbumInfo(albummid).then(res => {
           this.listLoading = false
@@ -141,22 +111,22 @@ export default {
       albumInfo: {
         aDate: "2003-07-31",
         albumTips: "",
-        color: 14712896,
-        company: "杰威尔音乐有限公司",
-        company_new: Object,
+        color: 1496,
+        company: "",
+        company_new: [],
         cur_song_num: 11,
-        desc: "2003年最被期待的专辑",
-        genre: "Pop 流行",
+        desc: "",
+        genre: "",
         id: 8220,
-        lan: "国语",
+        lan: "",
         list: [],
-        mid: "000MkMni19ClKG",
-        name: "叶惠美",
+        mid: "",
+        name: "",
         radio_anchor: 0,
         singerid: 4558,
         singermblog: null,
-        singermid: "0025NhlN2yWrP4",
-        singername: "周杰伦",
+        singermid: "",
+        singername: "",
         song_begin: 0,
         total: 11,
         total_song_num: 11
@@ -164,20 +134,20 @@ export default {
       song: {
         f: "436088|断桥残雪|7221|许嵩|35485|Vae新歌 精选珍藏合辑|1958988|227|9|1|0|9083510|3633531|0|0|0|0|5642756|5496214|0|004ENQPZ0dHaqy|000CK5xN3yZDJt|001jmC6x1RMfh0|31|0",
         info: [
-          "436088",
-          "断桥残雪",
-          "7221",
-          "许嵩",
-          "35485",
-          "Vae新歌 精选珍藏合辑",
-          "1958988",
-          "227",
-          "9",
-          "1"],
-        songID: 436088,
-        songMID: "004ENQPZ0dHaqy",
-        songName: "断桥残雪",
-        songname_hilight: "断桥残雪"
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""],
+        songID: 4,
+        songMID: "",
+        songName: "",
+        songname_hilight: ""
       },
       singerData: {
         albumNum: 29,
@@ -217,18 +187,7 @@ export default {
       this.isPlay = true
       this.showPlayAll = false
     },
-    loadMore (e) {
-
-    },
-    touchmove (e) {
-      //let top = document.getElementById('top')
-      //console.log(e.changedTouches[0].pageY)
-
-    },
-    touchstart (e) {
-
-    },
-    touchend (e) {
+    loadMore () {
 
     },
     handleScroll (e) {
@@ -243,9 +202,37 @@ export default {
     },
     addAll () {
       this.playList = this.singerData.hotsong
+    },
+    toAlbum (albummid) {
+      console.log(albummid)
+      this.$router.push({ path: '/albumList', query: { albummid } })
+    },
+    getData () {
+
+    },
+    init (singermid) {
+      this.$indexDB.checkData(this, 'singers', singermid)
+        .then(res => {
+           console.log('跳转后')
+          let singerData = res.data
+          try {
+            singerData.hotsong.forEach((item, index, arr) => {
+              /* f=  "436088|断桥残雪|7221|许嵩|35485|Vae新歌 精选珍藏合辑|1958988|227|9|1|0|9083510|3633531|0|0|0|0|5642756|5496214|0|004ENQPZ0dHaqy|000CK5xN3yZDJt|001jmC6x1RMfh0|31|0"
+              * info = []
+              */
+              if (item.f) {
+                arr[index].info = item.f.split('|')
+              }
+            })
+            this.singerData = singerData || ''
+          } catch (e) {
+            throw '本地存储歌曲信息读取失败！'
+          }
+        }).catch(e=>{
+          console.log(e)
+        })
     }
-  }
-  ,
+  },
   filters: {
     filterNum: function (val) {
       val = parseFloat(val)

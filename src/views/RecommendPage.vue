@@ -1,59 +1,73 @@
 <template>
-  <div class="">
-    <div id='slider'
-         class="slider">
-        <img :src="picUrl"
-             alt="">
-    </div>
+  <div>
+    <top-swiper :list='list'></top-swiper>
+    <!-- 这里是想让滑块不触发滑动事件 但是失败了 -->
     <radio-card></radio-card>
     <list-card :list='songList'></list-card>
   </div>
+
 </template>
 
 <script>
 import API from '@/api'
-import RadioCard from '@/components/Card/RadioCard.vue'
-import ListCard from '@/components/Card/ListCard.vue'
 
 export default {
-  name: 'RecommendPage',
+  name: 'recommend',
   components: {
-    ListCard,
-    RadioCard
+    ListCard: resolve => require(['@/components/Card/ListCard'], resolve),
+    RadioCard: resolve => require(['@/components/Card/RadioCard'], resolve),
+    TopSwiper: resolve => require(['@/components/Header/TopSwiper'], resolve)
   },
   mounted () {
-    API.getHomePageInfo().then(res => {
-      this.loading = false
-      this.slider = res.data.slider
-      this.songList = res.data.songList
-    })
-
-    this.winWidth = window.innerWidth || document.body.clientWidth || 375
-    this.imgHeight = this.winWidth / 2.5
-
+    this.init()
   },
   data () {
     return {
       loading: true,
       songList: [],
-
-      currentIndex: 0,// 轮播图索引      
       slider: [{           // 轮播图图片
         id: 0,
         linkUrl: "",
         picUrl: ''      }],
-      winWidth: 375,  // 窗口宽度
-      imgHeight: 150  // 图片高度 2.5倍
-
     }
   },
   computed: {
-    picUrl () {
-      return this.slider[this.currentIndex].picUrl || ''
+    list () {
+      return this.slider
     }
   },
   methods: {
-  }
+    getData () {
+      API.getHomePageInfo().then(res => {
+        this.loading = false
+        let slider = res.data.slider || []
+        let songList = res.data.songList || []
+        this.slider = slider
+        this.songList = songList
+        return [{ name: 'slider', data: slider }, { name: 'songList', data: songList }]
+      })
+        .then(res => {
+          res.forEach(item => {
+            this.$indexDB.addOneData(this,'recommend',item)
+          })
+        })
+    },
+    init () {
+      Promise.all([
+        this.$indexDB.checkData(this, 'recommend', 'slider')
+          .then(res => {
+            this.slider = res.data
+          }),
+        this.$indexDB.checkData(this, 'recommend', 'songList')
+          .then(res => {
+            this.songList = res.data
+          })
+      ]).catch(e => {
+        console.log(e)
+        this.getData()
+      })
+    }
+  },
 }
 </script>
 

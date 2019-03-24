@@ -63,16 +63,15 @@
 
 <script>
 import API from '@/api'
-import {rankRule as RULE } from '@/api/rankRule'
+import { rankRule as RULE } from '@/api/rankRule'
 export default {
   name: 'RankListPage',
   mounted () {
-    this.id = this.$route.query.topID || 0
-    this.picUrl = this.$route.query.pic || ''
-    this.title = this.$route.query.ListName || ''
-    this.update_key = this.$route.query.update_key
+    let topID = this.$route.query.topID || 0
+    this.id = topID
     this.songlist = []
-    this.getList(0, 30)
+    this.init(topID)
+
   },
   data () {
     return {
@@ -85,7 +84,7 @@ export default {
       total_song_num: 100,
       update_time: '',
 
-      logo: require('@/assets/logo.png'),
+      logo: require('@/assets/img/logo.png'),
       isPlay: false,
       renderIndex: 0,
 
@@ -94,11 +93,8 @@ export default {
       songlist: [],
       showSongs: [],
       song: {},
-      info:''
+      info: ''
     }
-  },
-  computed: {
-    
   },
   watch: {
     renderIndex: function (val) {
@@ -109,13 +105,13 @@ export default {
         this.showSongs = arr
       })
     },
-    id:function(val){
+    id: function (val) {
       let mid = '_' + String(this.id)
       console.log(val)
       this.$nextTick(function () {
-        this.info = RULE[mid].rule||''
-        console.log( RULE[mid].rule)
-      })     
+        this.info = RULE[mid].rule || ''
+        console.log(RULE[mid].rule)
+      })
     }
   },
   methods: {
@@ -128,18 +124,47 @@ export default {
       this.renderIndex += 10
       this.getList(this.song_begin + this.cur_song_num, 10)
     },
-    getList (begin, num) {
-      API.getSongsByTopList(this.id, this.update_key, begin, num).then(res => {
+    getList (topID, begin, num) {
+      let update_key = this.$localstore.fetch('topID' + topID) || '2018_09'
+      API.getSongsByTopList(topID, update_key, begin, num).then(res => {
+        let data = res.data
         if (this.renderIndex == 0) this.renderIndex = 10;
-        this.comment_num = res.data.comment_num
-        this.cur_song_num = res.data.cur_song_num
-        this.date = res.data.date
-        this.song_begin = res.data.song_begin
-        this.songlist = this.songlist.concat(res.data.songlist)
-        this.total_song_num = res.data.total_song_num
-        this.update_time = res.data.update_time
+
+        this.comment_num = data.comment_num
+        this.cur_song_num = data.cur_song_num
+        this.date = data.date
+        this.song_begin = data.song_begin
+        this.songlist = songlist.concat(res.data.songlist)
+        this.total_song_num = data.total_song_num
+        this.update_time = data.update_time
         this.loading = false
+
+        return { topID, data }
       })
+        .then(res => {
+          this.$indexDB.addOneData(this, 'rankLists', res)
+        })
+
+    },
+    init (topID) {
+      this.$indexDB.checkData(this, 'rank', topID)   // 获取排行榜主页传来的数据
+        .then(res => {
+          let data = res.data
+          this.picUrl = data.pic || ''
+          this.title = data.ListName || ''
+          this.update_key = data.update_key || ''
+        })
+      this.$indexDB.checkData(this, 'rankLists', topID)   // 获取排行榜主页传来的数据
+        .then(res => {
+          let data = res.data
+          this.picUrl = data.pic || ''
+          this.title = data.ListName || ''
+          this.update_key = data.update_key || ''
+        })
+        .catch(e => {
+          console.log(e)
+          this.getList(topID, 0, 30)
+        })
     }
   },
   filters: {

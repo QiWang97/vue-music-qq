@@ -6,7 +6,7 @@
     <header class='top'
             v-if='!radioLoading'>
       <div>
-        <img :src="singerAlbum"
+        <img v-lazy="singerAlbum"
              alt="">
         <div class='fl m-l-xl'>
           <h3>{{song.singer[0].name||''}}</h3>
@@ -39,7 +39,7 @@
             </div>
             <div class='imfo-img'
                  @click.stop="toggleAlbum">
-              <img :src="album"
+              <img  v-lazy="album"
                    alt=""
                    v-show='showAlbum'>
             </div>
@@ -57,7 +57,7 @@
           </footer>
         </section>
         <div class='bg-img'>
-          <img :src="album"
+          <img  v-lazy="album"
                alt="">
         </div>
       </div>
@@ -69,7 +69,7 @@
         <ul>
           <li v-for="(item, index) in likeSongs"
               :key="index">
-            <img :src="item.album.url||''"
+            <img  v-lazy="item.album.url||''"
                  alt="">
             <div class='fl p-sm'>
               <h4>{{item.name}}</h4>
@@ -84,14 +84,14 @@
       <section class="detail p-h-sm">
         <h3>歌手与专辑</h3>
         <div class="detail-item">
-          <img :src="singerAlbum"
+          <img  v-lazy="singerAlbum"
                alt="">
 
           <h4>歌手 {{song.singer[0].name||''}}</h4>
           <i></i>
         </div>
         <div class="detail-item">
-          <img :src="detail.albumUrl"
+          <img  v-lazy="detail.albumUrl"
                alt="">
           <h4>专辑 {{detail.name}}</h4>
           <i></i>
@@ -104,7 +104,7 @@
         <ul>
           <li v-for="(item, index) in hotCommentList"
               :key="index">
-            <aside><img :src="item.avatarurl"
+            <aside><img  v-lazy="item.avatarurl"
                    alt=""></aside>
             <div>
               <h4>{{item.rootcommentnick}}</h4>
@@ -126,7 +126,7 @@
           <li v-for="(item, index) in likeMvs"
               :key="index">
             <!-- <video src=""></video> -->
-            <img :src="item.picurl"
+            <img  v-lazy="item.picurl"
                  alt="">
             <h4>{{item.subtitle||''}}</h4>
             <h5>{{item.singers[0].name||''}}</h5>
@@ -164,7 +164,7 @@
 import { radioCookies, setCookie } from '@/api/util'
 import API from '@/api'
 export default {
-  name: 'RaidoPage',
+  name: 'radio',
   mounted () {
     // 注入cookie，获取电台歌单的额必要操作
     let expireDays = 1000 * 60 * 60;
@@ -179,14 +179,12 @@ export default {
         this.raidoList = res.radiolist.data.radio_list || []  // 电台频道列表
         this.songList = res.songlist.data.track_list || []  //  电台歌单
         this.songListId = res.songlist.data.id || 0   // 电台频道 id
-        this.song = this.songList[0] || {}   // 加载完成自动设置歌曲信息，但是不自动播放
+        this.song = this.songList[0] ||  { singer: [{ name: '',mid:''}], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' }   // 加载完成自动设置歌曲信息，但是不自动播放
 
         this.getComment(this.song.id, 10, 0)
         this.getSongDetails(this.song.id)
 
       })
-
-
   },
   data () {
     return {
@@ -197,7 +195,7 @@ export default {
       isPlay: false,    // 是否在播放
 
       songListId: 0,                // 该歌单id ，用于查评论
-      song: { singer: [{ name: '' }], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' },    // 正在播放的歌曲
+      song: { singer: [{ name: '',mid:''}], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' },    // 正在播放的歌曲
       playList: [],     // 播放列表
       lyric: '',   // 歌词信息
 
@@ -570,7 +568,7 @@ section {
       position: absolute;
       top: 50%;
       left: 50%;
-      background-image: url("../assets/list_sprite.png");
+      background-image: url("../assets/img/list_sprite.png");
       background-repeat: no-repeat;
       background-position: 0 0;
       background-size: 2.5rem 6.875rem;
