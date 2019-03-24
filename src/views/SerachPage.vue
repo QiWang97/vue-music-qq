@@ -3,15 +3,16 @@
     <div class='m-v-sm p-h-sm relative search-bar'>
       <i class="fa fa-search bg-white"
          aria-hidden="true"
-         @click="search" />
+         @click="seek" />
       <input type="text"
              v-model="searchKw"
              placeholder="搜索歌曲、歌单、专辑"
-             @click="searchClick">
+             @keyup.enter='seek'
+             @click="inputClick">
       <span @click="cancelClick"
-            v-show="cancel">取消</span>
+            v-show="!hotSearch">取消</span>
       <span class='no-cancel'
-            v-show="!cancel"></span>
+            v-show="hotSearch"></span>
     </div>
     <div class='hotSearch'
          v-show="hotSearch">
@@ -43,22 +44,8 @@
           <h5>{{item.singer|filterName}}</h5>
         </li>
       </ul>
-      <!--       <ul>
-        <li v-for="(item,index) in searchRes.albums.list"
-            :key='index'>
-          <span>
-            <img :src="'https://y.gtimg.cn/music/photo_new/T001R68x68M000'+item.albummid+'.jpg?max_age=2592000'"
-                 @error="imgErr"
-                 alt="">
-          </span>
-          <div>
-            <h3> {{item.songname}}</h3>
-            <h5>{{item.albumname}}</h5>
-          </div>
-        </li>
-      </ul> -->
     </div>
-    <div v-show="searchHis"
+    <div v-show="showHis"
          class='searchHis'>
       <ul>
         <li v-for="(item,index) in searchHistory"
@@ -80,7 +67,7 @@
 
 <script>
 import API from '@/api'
-const imgerr = require('@/assets/search_sprite.png')
+const imgerr = require('@/assets/img/search_sprite.png')
 
 export default {
   name: '',
@@ -91,11 +78,13 @@ export default {
       this.special_url = res.special_url
     })
   },
+  components: {
+  },
   data () {
     return {
-      cancel: false,
       hotSearch: true,
-      searchHis: false,
+
+      flag0: '',
 
       searchRes: {
         songs: {
@@ -146,53 +135,69 @@ export default {
 
     }
   },
-  watch: {
-    /*     searchKw: function (val) {
-    
-        } */
+  computed: {
+    showHis () {
+      return (this.searchKw.trim() == '') && !this.hotSearch
+    }
   },
   methods: {
-    search () {
-      this.searchHis = false
-      API.searchSongs(this.searchKw).then(res => {
+    search (keyword) {
+      let kw = keyword.trim()
+      if (kw == '') return;
+      API.searchSongs(kw).then(res => {
+        let zhida = res.data.zhida
         this.searchRes.songs = res.data.song
         this.zhida = res.data.zhida
+        if (zhida.type == 1 && zhida.zhida_singer.singerMID) {
+          let item = {
+            singermid: zhida.zhida_singer.singerMID,
+            data: zhida.zhida_singer
+          }
+          this.$indexDB.addOneData(this, 'singers', item)
+        }
         //return res.data.zhida.type == 1 ? res.data.zhida.zhida_singer : null
       })
       /*       API.searchAlbums(this.searchKw).then(res => {
               this.searchRes.albums = res.data.song
             }) */
+
+    },
+    addHistory (keyword) {
+      let kw = keyword.trim()
+      this.flag0 = kw
+      if (kw == '') return;
       let flag = true
       this.searchHistory.forEach((item, index, arr) => {
-        if (item.trim() == this.searchKw.trim()) {
-          flag = !flag
+        if (item == kw) {
+          flag = false
         }
       });
       if (flag) {
-        this.searchHistory.push(this.searchKw)
+        this.flag0 = false
+        this.searchHistory.push(kw)
       }
-
     },
-    searchClick () {
-      this.cancel = true
+    inputClick () {
       this.hotSearch = false
-      this.searchHis = true
     },
     cancelClick () {
-      this.cancel = false
-      this.searchHis = false
       this.hotSearch = true
       this.searchKw = ''
       this.searchRes.songs.list = []
       this.searchRes.albums.list = []
       this.zhida.type = 0
     },
+    seek () {
+      let keyword = this.searchKw
+      this.search(keyword)
+      this.addHistory(keyword)
+    },
     hotSearchClick (index) {
-      this.searchHis = false
-      this.searchClick()
-      this.search()
-      this.searchKw = this.hotkey[index].k
-
+      this.inputClick()
+      let keyword = this.hotkey[index].k
+      this.searchKw = keyword
+      this.search(keyword)
+      this.addHistory(keyword)
     },
     delHis (index) {
       if (index > 100) {
@@ -204,17 +209,11 @@ export default {
     imgErr (e) {
       e.target.src = imgerr
     },
-    toSinger: async function (mid) {
+    toSinger: function (mid) {
+      console.log('跳转前')
       if (mid && this.zhida.type != 1 && mid != this.zhida.zhida_singer.singerMID) return;
-      let singerData = localStorage.getItem(mid);
-      if (!singerData) {
-        await localStorage.setItem(mid, JSON.stringify(this.zhida.zhida_singer))
-        let singerData2 = localStorage.getItem(mid)
-        if (!singerData2) {
-          return;
-        }
-      }
       this.$router.push({ path: `/singer/${mid}` })
+      console.log('跳转中')
     }
   },
   filters: {

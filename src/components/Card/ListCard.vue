@@ -21,11 +21,8 @@
 </template>
 
 <script>
-
 export default {
   name: 'ListCard',
-  mounted () {
-  },
   mounted () {
   },
   props: ['list'],
@@ -45,7 +42,6 @@ h2 > span {
   float: right;
   font-size: 14px;
   margin-right: 20px;
-
   &::after {
     content: "";
     display: inline-block;
@@ -56,7 +52,6 @@ h2 > span {
     -webkit-transform: rotate(-45deg);
   }
 }
-
 li {
   width: 50%;
   img {
@@ -69,7 +64,7 @@ li {
     bottom: 0.375rem;
     height: 1.5rem;
     width: 1.5rem;
-    background-image: url("../../assets/list_sprite.png");
+    background-image: url("../../assets/img/list_sprite.png");
     background-repeat: no-repeat;
     background-position: 0 0;
     background-size: 1.5rem 3.75rem;

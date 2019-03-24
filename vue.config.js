@@ -9,12 +9,17 @@ function resolve(dir) {
     return path.join(__dirname, dir)
 }
 module.exports = {
-    publicPath: "/",
+    publicPath: "./",
     // 输出目录
     outputDir: 'dist',
+    assetsDir: './',
     lintOnSave: true,
-    // 是否为生产环境构建生成 source map？
+    // 是否为生产环境构建生成 source map
     productionSourceMap: false,
+    /* productionSourceMap: true,
+     configureWebpack: {
+         devtool: 'source-map'
+     }, */
     devServer: {
         before(apiserver) {
             apiserver.get('/apl/getLyric', (req, res) => {

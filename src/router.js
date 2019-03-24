@@ -1,13 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from './views/Index.vue'
-import RaidoPage from './views/RaidoPage.vue'
-import SongListPage from './views/SongListPage.vue'
-import RankListPage from './views/RankListPage.vue'
-import AlbumListPage from './views/AlbumListPage.vue'
-import SingerPage from './views/SingerPage.vue'
-import Test from './views/Test.vue'
-/* import ListCard from '@/components/MainItems/ListCard.vue' */
 
 Vue.use(Router)
 
@@ -17,35 +9,35 @@ export default new Router({
   routes: [{
       path: '/',
       name: 'index',
-      component: Index 
+      component: resolve => require(['@/views/Index'], resolve)
     }, {
       path: '/radio',
       name: 'RaidoPage',
-      component: RaidoPage
+      component: resolve => require(['@/views/RaidoPage'], resolve)
     }, {
       path: '/songList/:id',
       name: 'SongListPage',
-      component: SongListPage
+      component: resolve => require(['@/views/SongListPage'], resolve)
     },
     {
-      path: '/albumList/:albummid',
+      path: '/albumList',
       name: 'AlbumListPage',
-      component: AlbumListPage
+      component: resolve => require(['@/views/AlbumListPage'], resolve)
     },
-     {
+    {
       path: '/singer/:singermid',
       name: 'SingerPage',
-      component: SingerPage
+      component: resolve => require(['@/views/SingerPage'], resolve)
     },
     {
       path: '/rankList',
       name: 'RankListPage',
-      component: RankListPage
+      component: resolve => require(['@/views/RankListPage'], resolve)
     },
     {
       path: '/test',
       name: 'test',
-      component: Test
+      component: resolve => require(['@/views/Test'], resolve)
     }
   ]
 })

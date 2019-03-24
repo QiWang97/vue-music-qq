@@ -37,10 +37,7 @@
            :src="cdlist.logo"
            alt="">
     </header>
-    <div id='main'
-         @touchmove.stop='touchmove'
-         @touchstart.stop='touchstart'
-         @touchend.stop='touchend'>
+    <div id='main'>
       <section class='song-info p-h-xl bg-white relative'>
         <h4>歌单 共（{{cdlist.total_song_num}}）首<span>收藏<i></i></span></h4>
         <ul>
@@ -55,7 +52,7 @@
           <h4>点击加载更多</h4>
         </footer>
       </section>
-      <footer class='m-v-xl info ' >
+      <footer class='m-v-xl info '>
         <h2 class='text-center'>歌单简介</h2>
         <p v-html='cdlist.desc'></p>
         <img :src="logo"
@@ -76,18 +73,15 @@ export default {
     window.addEventListener('scroll', this.handleScroll);
 
     let id = this.$route.params.id
-    API.getSongListInfo(id).then(res => {
-      this.listLoading = false
-      this.cdlist = res.cdlist[0]
-    })
+    this.init(id)
   },
-  destroyed () {
+  beforeDestroy () {
     window.removeEventListener('scroll', this.handleScroll)
   },
   data () {
     return {
       listLoading: true,
-      logo: require('@/assets/logo.png'),
+      logo: require('@/assets/img/logo.png'),
       isPlay: false,
       showPlayAll: true,
       renderIndex: 5,
@@ -174,16 +168,6 @@ export default {
     loadMore (e) {
       if (this.renderIndex > this.cdlist.total_song_num) return
       this.renderIndex += 5
-    }, touchmove (e) {
-      //let top = document.getElementById('top')
-      //console.log(e.changedTouches[0].pageY)
-
-    },
-    touchstart (e) {
-
-    },
-    touchend (e) {
-
     },
     handleScroll (e) {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -197,6 +181,25 @@ export default {
     },
     addAll () {
       this.playList = this.cdlist.songlist
+    },
+    init (dissid) {
+      this.$indexDB.checkData(this, 'songLists', dissid)
+        .then(res => {
+          this.slider = res.data
+        }).catch(e => {
+          console.log(e)
+          this.getData(dissid)
+        })
+    },
+    getData (dissid) {
+      API.getSongListInfo(dissid).then(res => {
+        this.listLoading = false
+        let data = res.cdlist[0]
+        this.cdlist = data
+        return { dissid, data }
+      }).then(res => {
+        this.$indexDB.addOneData(this, 'songLists', res)
+      })
     }
   },
   filters: {
@@ -289,7 +292,7 @@ article {
   .album {
     height: 145px;
     padding: 10px;
-    &>img {
+    & > img {
       float: left;
       width: 125px;
       height: 125px;
@@ -300,7 +303,7 @@ article {
       height: 125px;
       padding: 5px;
     }
-    h4>img{
+    h4 > img {
       display: inline-block;
       width: 30px;
     }
@@ -347,13 +350,13 @@ article {
   }
 }
 
-.info p{  
+.info p {
   padding: 15px;
   font-size: 14px;
   line-height: 24px;
   text-align: justify;
 }
-.info img{
+.info img {
   width: 25px;
   height: 25px;
   margin: 0 auto;

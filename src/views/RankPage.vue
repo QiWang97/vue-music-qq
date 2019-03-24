@@ -1,20 +1,20 @@
 <template>
-  <div class="m-h-sm">
+  <div class='m-h-sm'>
     <ul>
-      <li v-for="(item, index) in rankList"
+      <li v-for="(item, index) in rank"
           :key="index"
-          @click="toRank(item.topID,item.update_key,item.pic,item.ListName)">
+          @click="toRank(item.topID,item.update_key)">
         <img :src="item.pic"
              alt="">
         <div>
           <h3>{{item.ListName}}</h3>
-          <h4 v-for="(item0, index0) in item.songlist" class="s-el"
+          <h4 v-for="(item0, index0) in item.songlist"
+              class="s-el"
               :key="index0">{{item0.songname? (index0 + 1):''}} {{item0.songname}} <span>{{item0.singername}}</span></h4>
         </div>
         <i></i>
       </li>
     </ul>
-
   </div>
 </template>
 
@@ -24,17 +24,12 @@ import API from '@/api'
 export default {
   name: '',
   mounted () {
-    API.topList().then(res => {
-      this.loading = false
-      let arr = [...res[0].List, ...res[1].List]
-
-      this.rankList = arr
-    })
+    this.init()
   },
   data () {
     return {
       loading: true,
-      rankList: [{
+      rank: [{
         ListName: "",
         MacDetailPicUrl: "",
         MacListPicUrl: "",
@@ -54,12 +49,41 @@ export default {
       }]
     }
   },
-  computed: {
-
-  },
   methods: {
-    toRank (topID, update_key, pic, ListName) {
-      this.$router.push({ path: 'rankList', query: { topID, pic, ListName, update_key } })
+    toRank (topID, update_key) {
+      this.$localstore.save('topID' + topID, update_key)
+      this.$router.push({ path: 'rankList', query: { topID } })
+    },
+    init () {
+      this.$indexDB.getAllData(this.$DB.db, 'rank')
+        .then(res => {
+          if (res.length > 5) {
+            this.rank = res.map(item => item.data)
+          } else {
+            this.getData()
+          }
+        })
+        .catch(e => {
+          this.getData()
+        })
+    },
+    getData () {
+      API.topList().then(res => {
+        this.loading = false
+        let arr = [...res[0].List, ...res[1].List]
+        this.rank = arr
+
+        return arr.map(item => {
+          return {
+            topID: item.topID,
+            data: item
+          }
+        })
+      }).then(res => {
+        res.forEach(item => {
+          this.$indexDB.addOneData(this, 'rank', item)
+        });
+      })
     }
   }
 }
@@ -81,11 +105,11 @@ li {
   div {
     margin-left: 110px;
     padding: 5px 0 5px 15px;
-    h3{
-      color:#000;
+    h3 {
+      color: #000;
     }
-    h4>span{
-      color:rgba(0,0,0,.6);
+    h4 > span {
+      color: rgba(0, 0, 0, 0.6);
     }
   }
   i {

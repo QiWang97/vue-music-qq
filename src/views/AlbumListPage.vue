@@ -74,7 +74,8 @@ export default {
   name: 'AlbumListPage',
   mounted () {
     window.addEventListener('scroll', this.handleScroll);
-    let albummid = this.$route.params.albummid
+    let albummid = this.$route.query.albummid
+    console.log(albummid)
     API.getAlbumInfo(albummid).then(res => {
       this.listLoading = false
       this.albumInfo = res
