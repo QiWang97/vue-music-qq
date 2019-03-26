@@ -3,10 +3,15 @@
   <div>
     <!-- header -->
     <top-bar is-fixed
-             class="bg-white"
-             :btn-title="'点击下载'"
-             :img-url="logoMin">
+             class="bg-white">
+      <template #img>
+        <img v-lazy="logoMin"
+             alt="">
+      </template>
       <h1>音乐无极限</h1>
+      <template #btn>
+        <span>点击下载</span>
+      </template>
     </top-bar>
     <div class="bg-gray main">
       <!-- nav -->
@@ -19,11 +24,12 @@
            @click="select(index)">{{item.name}}
         </a>
       </nav>
-      <nav-anim>
+      <transition name='fade'
+                  mode="out-in">
         <keep-alive>
           <component :is="currentTabComponent"></component>
         </keep-alive>
-      </nav-anim>
+      </transition>
 
       <footer class='text-center p-b-lg'>
         <h5 class='m-v-lg'>查看电脑版网页</h5>
@@ -48,7 +54,6 @@ export default {
     RecommendPage: resolve => require(['@/views/RecommendPage'], resolve),
     SerachPage: resolve => require(['@/views/SerachPage'], resolve),
     RankPage: resolve => require(['@/views/RankPage'], resolve),
-    NavAnim: resolve => require(['@/components/Animation/NavAnim'], resolve),
     TopBar: resolve => require(['@/components/Header/TopBar'], resolve)
   },
   data () {
@@ -76,27 +81,6 @@ export default {
       this.currentIndex = id
       this.currentTabComponent = this.navli[id].component
     },
-    /*  
-    ToDo:
-    这里想实现左右滑动效果
-    但是 recommend page 使用的 swipe 插件会触发父组件的事件
-    所以失败了
-    */
-    /*
-     nextPage () {
-       let id = this.currentIndex + 1
-       let num = this.navli.length - 1
-       if (id > num) { id = 0 }
-       this.select(id)
-     },
-     prePage () {
-       console.log('index:  aaaaaaaa')
-       let id = this.currentIndex - 1
-       let num = this.navli.length - 1
-       if (id < 0) { id = num }
-       this.select(id)
-     }
-     */
   }
 }
 </script>

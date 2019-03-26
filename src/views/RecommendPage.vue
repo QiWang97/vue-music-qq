@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='recommend'>
     <top-swiper :list='list'></top-swiper>
     <!-- 这里是想让滑块不触发滑动事件 但是失败了 -->
     <radio-card></radio-card>
@@ -72,6 +72,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.recommend{
+  overflow: hidden;
+}
 .slider {
   padding-top: 1px;
   background-color: #fff;

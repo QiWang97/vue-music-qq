@@ -2,23 +2,20 @@
   <article @click="toggleSongList(1)"
            class="">
     <!-- 头部固定 -->
-
-    <header class='top'
-            v-if='!radioLoading'>
-      <div>
+    <top-bar>
+      <template #img>
         <img v-lazy="singerAlbum"
              alt="">
-        <div class='fl m-l-xl'>
-          <h3>{{song.singer[0].name||''}}</h3>
-          <h4>更多好音乐</h4>
-        </div>
+      </template>
+      <h3>{{song.singer|nameArr}}</h3>
+      <h4>更多好音乐</h4>
+      <template #btn>
         <span>立即收听</span>
-      </div>
-    </header>
+      </template>
+    </top-bar>
     <!-- 头部固定 结束 -->
     <!-- 主界面 -->
     <div class="main relative">
-
       <!-- 歌词部分 -->
       <div class="pos">
         <section class='info text-center block relative'
@@ -30,7 +27,7 @@
                  aria-hidden="true"
                  @click.stop="toggleSongList(0)"></i>
             </h1>
-            <h4>{{song.singer[0].name||''}}</h4>
+            <h4>{{song.singer|nameArr}}</h4>
           </header>
           <div class="info-main">
             <div class="info-lyric"
@@ -39,7 +36,7 @@
             </div>
             <div class='imfo-img'
                  @click.stop="toggleAlbum">
-              <img  v-lazy="album"
+              <img v-lazy="album"
                    alt=""
                    v-show='showAlbum'>
             </div>
@@ -49,6 +46,7 @@
               <i class="fa fa-step-backward"
                  aria-hidden="true"></i>
               <i :class="isPlay?'fa fa-pause':'fa fa-play'"
+                 @click="togglePlay"
                  aria-hidden="true"></i>
               <i class="fa fa-step-forward"
                  aria-hidden="true"></i>
@@ -57,7 +55,7 @@
           </footer>
         </section>
         <div class='bg-img'>
-          <img  v-lazy="album"
+          <img v-lazy="album"
                alt="">
         </div>
       </div>
@@ -67,44 +65,57 @@
       <section class="likeSong p-h-sm m-t-lg">
         <h3>猜你喜欢</h3>
         <ul>
-          <li v-for="(item, index) in likeSongs"
-              :key="index">
-            <img  v-lazy="item.album.url||''"
+          <router-link :to="{name:'album',params:{mid:item.album.mid}}"
+                       tag='li'
+                       v-for="item in likeSongs"
+                       :key="item.id">
+            <img v-lazy="item.album.url"
                  alt="">
             <div class='fl p-sm'>
               <h4>{{item.name}}</h4>
-              <h5>{{item.singer[0].name||''}}</h5>
+              <h5>{{item.singer|nameArr}}</h5>
             </div>
             <i></i>
-          </li>
+          </router-link>
         </ul>
       </section>
       <!-- 推荐歌曲 结束-->
       <!-- 推荐歌手专辑 -->
       <section class="detail p-h-sm">
-        <h3>歌手与专辑</h3>
+        <h3>歌手 专辑</h3>
         <div class="detail-item">
-          <img  v-lazy="singerAlbum"
+          <img v-lazy="singerAlbum"
                alt="">
 
-          <h4>歌手 {{song.singer[0].name||''}}</h4>
+          <h4>歌手
+            <router-link :to="{name:'singer',params:{mid:song.singer[0].mid}}"
+                         v-if='song.singer[0]'>
+              {{song.singer|nameArr}}
+            </router-link>
+          </h4>
           <i></i>
         </div>
         <div class="detail-item">
-          <img  v-lazy="detail.albumUrl"
+          <img v-lazy="detail.albumUrl"
                alt="">
-          <h4>专辑 {{detail.name}}</h4>
+          <h4> 专辑
+            <router-link :to="{name:'album',query:{mid:detail.track_info.album.mid}}"
+                         v-if='detail.track_info'>
+              {{detail.name}}
+            </router-link>
+          </h4>
           <i></i>
         </div>
       </section>
       <!-- 推荐歌手专辑 结束-->
       <!-- 热评 -->
-      <section class="comment p-h-sm">
+      <section class="comment p-h-sm"
+               v-if='hotCommentList.length>0'>
         <h3>精彩评论</h3>
         <ul>
-          <li v-for="(item, index) in hotCommentList"
+          <li v-for="(item, index) in comments4show"
               :key="index">
-            <aside><img  v-lazy="item.avatarurl"
+            <aside><img v-lazy="item.avatarurl"
                    alt=""></aside>
             <div>
               <h4>{{item.rootcommentnick}}</h4>
@@ -120,16 +131,16 @@
       </section>
       <!-- 热评 结束 -->
       <!-- 推荐mv -->
-      <section class="mv p-h-sm">
-        <h3>推荐音乐视频</h3>
+      <section class="mv p-h-sm"
+               v-if='likeMvs.length>0'>
+        <h3>推荐 MV</h3>
         <ul>
           <li v-for="(item, index) in likeMvs"
               :key="index">
             <!-- <video src=""></video> -->
-            <img  v-lazy="item.picurl"
+            <img v-lazy="item.picurl"
                  alt="">
-            <h4>{{item.subtitle||''}}</h4>
-            <h5>{{item.singers[0].name||''}}</h5>
+            <h3>{{item.singers|nameArr}} -- {{item.title||''}}</h3>
             <span></span>
           </li>
         </ul>
@@ -144,7 +155,7 @@
       <header>
         <h4>播放队列（{{songList.length}}）首</h4>
       </header>
-      <div class='relative' @click.stop="">
+      <div class='relative'>
         <ul id='list'>
           <li v-for="(item, index) in songList"
               :key="index"
@@ -157,33 +168,35 @@
 
     </section>
     <!-- 上拉歌曲列表 结束 -->
+    <audio ref='audio'
+           v-if="songUrl != ''">
+      <source :src='songUrl'
+              type='audio/mp3'>
+    </audio>
   </article>
 </template>
 
 <script>
-import { radioCookies, setCookie } from '@/api/util'
 import API from '@/api'
 export default {
   name: 'radio',
+  props: ['id'],
+  components: {
+    TopBar: resolve => require(['@/components/Header/TopBar'], resolve)
+  },
   mounted () {
-    // 注入cookie，获取电台歌单的额必要操作
-    let expireDays = 1000 * 60 * 60;
-    for (let key in radioCookies) {
-      setCookie(key, radioCookies[key], expireDays)
-    }
     // 获取歌单，导入歌单信息
-    let radioId = parseInt(this.$route.query.radioId)
-    API.getRadioList(radioId)
+    API.getRadioList(parseInt(this.id))
       .then(res => {
         this.radioLoading = false   // 表示歌单加载完成
         this.raidoList = res.radiolist.data.radio_list || []  // 电台频道列表
         this.songList = res.songlist.data.track_list || []  //  电台歌单
         this.songListId = res.songlist.data.id || 0   // 电台频道 id
-        this.song = this.songList[0] ||  { singer: [{ name: '',mid:''}], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' }   // 加载完成自动设置歌曲信息，但是不自动播放
+        this.song = this.songList[0] || { singer: [{ name: '', mid: '' }], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' }   // 加载完成自动设置歌曲信息，但是不自动播放
 
         this.getComment(this.song.id, 10, 0)
         this.getSongDetails(this.song.id)
-
+        this.getSongUrl(this.song.mid)
       })
   },
   data () {
@@ -193,9 +206,10 @@ export default {
       showAlbum: false,    // false 表示不展示歌曲封面
       currentCommentIndex: 1,  // 当前展示的评论序号
       isPlay: false,    // 是否在播放
+      songUrl: '',
 
       songListId: 0,                // 该歌单id ，用于查评论
-      song: { singer: [{ name: '',mid:''}], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' },    // 正在播放的歌曲
+      song: { singer: [{ name: '', mid: '' }], name: '', album: { mid: '', name: '', url: '' }, id: '', mid: '' },    // 正在播放的歌曲
       playList: [],     // 播放列表
       lyric: '',   // 歌词信息
 
@@ -228,6 +242,12 @@ export default {
     },
     hotCommentList () { // 热评列表
       return this.hot_comment.commenttotal > 0 ? this.hot_comment.commentlist : []
+    },
+    comments(){   // 合并列表
+      return this.commentList.concat(this.hotCommentList)
+    },
+    comments4show(){   // 展示列表
+      return this.comments.slice(0,this.currentCommentIndex)
     }
 
   },
@@ -238,16 +258,36 @@ export default {
     toggleAlbum (e) { // 点击切换展示封面状态
       this.showAlbum = !this.showAlbum
     },
+    togglePlay () {
+      let audio = this.$refs.audio || ''
+      if (!audio) return;
+
+      if (audio && (audio.paused || audio.ended)) {
+        audio.play()
+        this.isPlay = true
+        return;
+      }
+      audio.pause();
+      this.isPlay = false
+
+    },
     showComment () {  // 加载更多评论
-      let total = this.hotCommentList.length
-      if (this.currentCommentIndex > total) return
+      let total = this.comments.length
+      if (this.currentCommentIndex > total) return;
       this.currentCommentIndex += 5
     },
     switchSong (index) {  // 切换歌曲
       this.song = this.songList[index]
       this.getComment(this.song.id, 10, 0)
       this.getSongDetails(this.song.id)
+      this.getSongUrl(this.song.mid)
 
+    },
+    getSongUrl (mid) {
+      API.getSongUrlResource(mid)
+        .then(res => {
+          this.songUrl = res
+        })
     },
     getComment (id, page, num) {  // 获取评论
       API.getSongComment(id, page, num).then(res => {
@@ -277,10 +317,9 @@ export default {
             item.album.url = API.getAlbumURL(item.album.mid) || ''
           })
         } catch (e) {
-          throw '推荐歌曲信息图片处理失败'
-        } finally {
-          this.likeSongs = list || []
+          console.log('推荐歌曲信息图片处理失败')
         }
+        this.likeSongs = list || []
         this.likeMvs = res.video.data.list || []
       })
     }
@@ -423,6 +462,7 @@ section {
     margin-top: 10px;
     line-height: 3.5rem;
     text-align: center;
+    font-size: 1.25rem;
   }
   h4 {
     line-height: 1.25rem;
@@ -559,9 +599,6 @@ section {
     img {
       width: 100%;
       height: 12.125rem;
-    }
-    h4 {
-      margin-top: 0.3125rem;
     }
     span {
       display: block;

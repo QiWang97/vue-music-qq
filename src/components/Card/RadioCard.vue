@@ -3,17 +3,18 @@
     <h2 class="p-v-sm">电台</h2>
     <ul v-if="!loading"
         class='flex flex-wrap'>
-      <li v-for="(item,index) in showList"
-          :key="index"
-          class="block p-r-sm p-b-sm"
-          @click="toInfo(item.radioId)">
+      <router-link :to="{name:'radio',query:{id:item.radioId}}"
+                   tag="li"
+                   v-for="(item,index) in showList"
+                   :key="index"
+                   class="block p-r-sm p-b-sm">
         <div class="relative">
-          <img :src='item.radioImg'
+          <img v-lazy='item.radioImg'
                alt=''>
           <span></span>
         </div>
         <h4 class="p-l-xs p-b-xs bg-white">{{item.radioName}}</h4>
-      </li>
+      </router-link>
     </ul>
   </div>
 </template>
@@ -37,12 +38,10 @@ export default {
   computed: {
     showList () {
       if (this.loading) return;
-      return this.radioList[0].radioList.slice(1, 3)
-    }
-  },
-  methods: {
-    toInfo (radioId) {
-      this.$router.push({ path: '/radio', query: { radioId } })
+      let arr = this.radioList[0].radioList || []
+      return arr.sort(() => {
+        return .5 - Math.random()
+      }).slice(0,2)
     }
   }
 }

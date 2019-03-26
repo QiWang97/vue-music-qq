@@ -1,19 +1,22 @@
 <template>
   <!-- :options="swiperOption" -->
-  <swiper v-if='flag'>
+  <div id='swipe'>
+    <swiper v-if='flag'>
 
-    <swiper-slide v-for="item in renderList"
-                  :key='item.id'>
-      <img v-lazy="item.picUrl"
-           alt="">
-    </swiper-slide>
-    <div class="swiper-pagination"
-         slot="pagination"></div>
-    <!--     <div class="swiper-button-prev"
+      <swiper-slide v-for="item in renderList"
+                    :key='item.id'>
+        <img v-lazy="item.picUrl"
+             alt="">
+      </swiper-slide>
+      <div class="swiper-pagination"
+           slot="pagination"></div>
+      <!--     <div class="swiper-button-prev"
          slot="button-prev"></div>
     <div class="swiper-button-next"
          slot="button-next"></div> -->
-  </swiper>
+    </swiper>
+  </div>
+
 </template>
 
 <script>
@@ -71,7 +74,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+#swipe {
+  width: 100%;
+  height: 0;
+  padding-bottom: 40%;
+  overflow: hidden;
+}
 img {
+  display: block;
   width: 100%;
   height: auto;
 }

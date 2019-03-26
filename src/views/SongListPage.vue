@@ -69,11 +69,10 @@
 import API from '@/api'
 export default {
   name: 'SongListPage',
+  props:['id'],
   mounted () {
-    window.addEventListener('scroll', this.handleScroll);
-
-    let id = this.$route.params.id
-    this.init(id)
+    window.addEventListener('scroll', this.handleScroll);    
+    this.init(parseInt(this.id))
   },
   beforeDestroy () {
     window.removeEventListener('scroll', this.handleScroll)

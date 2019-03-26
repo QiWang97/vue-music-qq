@@ -2,12 +2,13 @@
   <div class="p-l-sm">
     <h2 class="p-v-sm">热门歌单<span>更多</span></h2>
     <ul class='flex flex-wrap'>
-      <li v-for="(item,index) in list"
-          class="block p-r-sm p-b-sm"
-          @click="toInfo(item.id)"
-          :key="index">
+      <router-link :to="{name:'songlist',query:{id:item.id}}"
+                   tag="li"
+                   v-for="item in list"
+                   class="block p-r-sm p-b-sm"
+                   :key="item.id">
         <div class="relative">
-          <img :src='item.picUrl'
+          <img v-lazy='item.picUrl'
                alt=''>
           <span></span>
         </div>
@@ -15,7 +16,7 @@
           <h4 class='s-el'>{{item.songListDesc}}</h4>
           <h5>{{item.songListAuthor}}</h5>
         </div>
-      </li>
+      </router-link>
     </ul>
   </div>
 </template>
@@ -28,11 +29,6 @@ export default {
   props: ['list'],
   data () {
     return {
-    }
-  },
-  methods: {
-    toInfo (id) {
-      this.$router.push(`/songList/${id}`)
     }
   },
 }

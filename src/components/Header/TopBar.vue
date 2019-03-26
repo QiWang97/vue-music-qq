@@ -2,15 +2,14 @@
   <div class='top flex'
        :class="{'top-fixed':isFixed}">
     <a href="javascript:;">
-      <img v-lazy="imgUrl"
-           alt="">
+      <slot name='img'></slot>
     </a>
     <div>
       <slot>
       </slot>
     </div>
     <a href="javascript:;">
-      <span>{{btnTitle}}</span>
+      <slot name='btn'></slot>
     </a>
   </div>
 </template>
@@ -22,27 +21,8 @@ export default {
     isFixed: {
       type: Boolean,
       default: false
-    },
-    btnTitle: {
-      type: String,
-      default: '点击关注'
-    },
-    imgUrl: {
-      type: String,
-      default: ""
     }
   },
-  mounted () {
-    let el = this.$refs.topbar
-    if (this.$isFixed) {
-      Velocity()
-    }
-  },
-  data () {
-    return {
-
-    }
-  }
 }
 </script>
 
@@ -53,6 +33,7 @@ export default {
   padding: 1rem 1rem 0.5rem 1rem;
   z-index: 15;
   align-items: center;
+  overflow: hidden;
 }
 .top-fixed {
   position: fixed;
@@ -63,24 +44,27 @@ export default {
 .top > div {
   flex: 1 1 auto;
   padding-left: 1rem;
+  vertical-align: top;
 }
-.top a {
-  display: block;
+.top > a {
+  display: inline-block;
   height: 3rem;
+  vertical-align: top;
 }
-a:first-child {
+.top > a:first-child {
   img {
-    height:3rem;
+    height: 3rem;
     border-radius: 100%;
   }
 }
-a:last-child {
+.top > a:last-child {
+  align-self: center;
   span {
     display: block;
-    padding:0.2rem 0.5rem;
+    padding: 0.2rem 0.5rem;
     font-size: 14px;
-    border:1px rgba(0,0,0,.3) solid;
-    border-radius:1rem;
+    border: 1px rgba(0, 0, 0, 0.3) solid;
+    border-radius: 1rem;
   }
 }
 </style>

@@ -12,26 +12,32 @@ export default new Router({
       component: resolve => require(['@/views/Index'], resolve)
     }, {
       path: '/radio',
-      name: 'RaidoPage',
+      name: 'radio',
+      props:(route)=>({
+        id:route.query.id
+      }),
       component: resolve => require(['@/views/RaidoPage'], resolve)
     }, {
-      path: '/songList/:id',
-      name: 'SongListPage',
+      path: '/songlist',
+      name: 'songlist',
+      props: (route) => ({
+        id: route.query.id
+      }),
       component: resolve => require(['@/views/SongListPage'], resolve)
     },
     {
-      path: '/albumList',
-      name: 'AlbumListPage',
-      component: resolve => require(['@/views/AlbumListPage'], resolve)
+      path: '/album',
+      name: 'album',
+      component: resolve => require(['@/views/AlbumPage'], resolve)
     },
     {
-      path: '/singer/:singermid',
-      name: 'SingerPage',
+      path: '/singer/:mid',
+      name: 'singer',
       component: resolve => require(['@/views/SingerPage'], resolve)
     },
     {
-      path: '/rankList',
-      name: 'RankListPage',
+      path: '/ranklist',
+      name: 'ranklist',
       component: resolve => require(['@/views/RankListPage'], resolve)
     },
     {
