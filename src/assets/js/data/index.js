@@ -17,17 +17,21 @@ Vue.prototype.$indexDB.checkData = function (ctx, storename, key) {
         ctx.$indexDB.getDataByKey(db, storename, key)
           .then(res => {
             // {name:'slider',data:slider} 
-            resolve(res)
+            if(res) resolve(res)
+            else reject('获取出错')            
+          },err=>{
+            reject(err)
           })
       }
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      console.log('查询出错')
+      reject(error)
     }
   })
 }
 // data 是 {}形式，
 Vue.prototype.$indexDB.addOneData = function (ctx, storename, data) {
-  return new Promise(resolve => {
+  return new Promise((resolve,reject) => {
     try {
       let db = ctx.$DB.db
       let keypath = ctx.$ojstores[storename]
@@ -37,7 +41,7 @@ Vue.prototype.$indexDB.addOneData = function (ctx, storename, data) {
         resolve()
       }
     } catch (error) {
-      console.log(e)
+      reject('添加出错',error)
     }
   })
 }

@@ -13,8 +13,8 @@ export default new Router({
     }, {
       path: '/radio',
       name: 'radio',
-      props:(route)=>({
-        id:route.query.id
+      props: (route) => ({
+        id: route.query.id
       }),
       component: resolve => require(['@/views/RaidoPage'], resolve)
     }, {
@@ -28,22 +28,37 @@ export default new Router({
     {
       path: '/album',
       name: 'album',
+      props: (route) => ({
+        mid: route.query.mid,
+      }),
       component: resolve => require(['@/views/AlbumPage'], resolve)
     },
     {
-      path: '/singer/:mid',
+      path: '/singer',
       name: 'singer',
+      props: (route) => ({
+        mid: route.query.mid,
+      }),
       component: resolve => require(['@/views/SingerPage'], resolve)
     },
     {
       path: '/ranklist',
       name: 'ranklist',
+      props: (route) => ({
+        id: route.query.id,
+        vkey: route.query.vkey
+      }),
       component: resolve => require(['@/views/RankListPage'], resolve)
     },
     {
       path: '/test',
       name: 'test',
       component: resolve => require(['@/views/Test'], resolve)
+    },
+    {
+      path: '/t2',
+      name: 't2',
+      component: resolve => require(['@/components/List/ListBg'], resolve)
     }
   ]
 })

@@ -1,9 +1,10 @@
 <template>
   <div class='m-h-sm'>
     <ul>
-      <li v-for="(item, index) in rank"
-          :key="index"
-          @click="toRank(item.topID,item.update_key)">
+      <router-link :to="{name:'ranklist',query:{id:item.topID,vkey:String(item.update_key)}}"
+                   tag="li"
+                   v-for="(item, index) in rank"
+                   :key="index">
         <img :src="item.pic"
              alt="">
         <div>
@@ -13,7 +14,7 @@
               :key="index0">{{item0.songname? (index0 + 1):''}} {{item0.songname}} <span>{{item0.singername}}</span></h4>
         </div>
         <i></i>
-      </li>
+      </router-link>
     </ul>
   </div>
 </template>
@@ -62,10 +63,10 @@ export default {
           } else {
             this.getData()
           }
-        })
-        .catch(e => {
+        },e => {
           this.getData()
         })
+       
     },
     getData () {
       API.topList().then(res => {
@@ -80,9 +81,11 @@ export default {
           }
         })
       }).then(res => {
-        res.forEach(item => {
+        console.log(res)
+         res.forEach(item => {
           this.$indexDB.addOneData(this, 'rank', item)
-        });
+            .catch(e => { console.log(e) })
+        }); 
       })
     }
   }

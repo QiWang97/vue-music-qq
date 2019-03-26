@@ -1,13 +1,15 @@
 <template>
   <div class="p-l-sm">
     <h2 class="p-v-sm">电台</h2>
-    <ul v-if="!loading"
+    <ul name="list"
+        v-if="!loading"
         class='flex flex-wrap'>
       <router-link :to="{name:'radio',query:{id:item.radioId}}"
                    tag="li"
                    v-for="(item,index) in showList"
                    :key="index"
-                   class="block p-r-sm p-b-sm">
+                   :data-index="index"
+                   class="block p-r-sm p-b-sm list-item">
         <div class="relative">
           <img v-lazy='item.radioImg'
                alt=''>
@@ -32,7 +34,7 @@ export default {
   data () {
     return {
       radioList: [{ radioList: [] }],
-      loading: true
+      loading: true,
     }
   },
   computed: {
@@ -41,9 +43,9 @@ export default {
       let arr = this.radioList[0].radioList || []
       return arr.sort(() => {
         return .5 - Math.random()
-      }).slice(0,2)
+      }).slice(0, 2)
     }
-  }
+  },
 }
 </script>
 <style lang="scss" scoped>

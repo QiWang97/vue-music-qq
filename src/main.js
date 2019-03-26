@@ -10,6 +10,9 @@ import '@/assets/js/data' // 数据库 注册即有全局方法
 import 'font-awesome/css/font-awesome.min.css' // font-awesome 字体 css
 import '@/assets/css/common.css' // css 通用样式 
 
+import Velocity from 'velocity-animate'; // 引入动画插件
+import 'velocity-animate/velocity.ui.js' // 同时引入velocity.ui.js插件，velocity.ui.js
+
 Vue.config.productionTip = false
 Vue.use(VueLazyload, {
   loading: require('@/assets/img/loading-bars.svg'),

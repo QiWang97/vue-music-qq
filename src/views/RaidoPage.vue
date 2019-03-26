@@ -45,8 +45,13 @@
             <div class='info-btn flex'>
               <i class="fa fa-step-backward"
                  aria-hidden="true"></i>
-              <i :class="isPlay?'fa fa-pause':'fa fa-play'"
-                 @click="togglePlay"
+              <i class='fa fa-play-circle'
+                 v-show='!isPlay'
+                 @click="play"
+                 aria-hidden="true"></i>
+              <i class="fa fa-pause-circle"
+                 v-show='isPlay'
+                 @click="pause"
                  aria-hidden="true"></i>
               <i class="fa fa-step-forward"
                  aria-hidden="true"></i>
@@ -62,10 +67,10 @@
 
       <!-- 歌词部分 结束-->
       <!-- 推荐歌曲 -->
-      <section class="likeSong p-h-sm m-t-lg">
+      <section class="likeSong p-h-sm m-t-lg" v-if='likeSongs.length>0'>
         <h3>猜你喜欢</h3>
         <ul>
-          <router-link :to="{name:'album',params:{mid:item.album.mid}}"
+          <router-link :to="{name:'album',query:{mid:item.album.mid}}"
                        tag='li'
                        v-for="item in likeSongs"
                        :key="item.id">
@@ -88,7 +93,7 @@
                alt="">
 
           <h4>歌手
-            <router-link :to="{name:'singer',params:{mid:song.singer[0].mid}}"
+            <router-link :to="{name:'singer',query:{mid:song.singer[0].mid}}"
                          v-if='song.singer[0]'>
               {{song.singer|nameArr}}
             </router-link>
@@ -168,11 +173,8 @@
 
     </section>
     <!-- 上拉歌曲列表 结束 -->
-    <audio ref='audio'
-           v-if="songUrl != ''">
-      <source :src='songUrl'
-              type='audio/mp3'>
-    </audio>
+    <audio-bar :mid='song.mid'
+               ref='audio'></audio-bar>
   </article>
 </template>
 
@@ -182,7 +184,8 @@ export default {
   name: 'radio',
   props: ['id'],
   components: {
-    TopBar: resolve => require(['@/components/Header/TopBar'], resolve)
+    TopBar: resolve => require(['@/components/Header/TopBar'], resolve),
+    AudioBar: resolve => require(['@/components/Play/AudioBar'], resolve),
   },
   mounted () {
     // 获取歌单，导入歌单信息
@@ -196,7 +199,6 @@ export default {
 
         this.getComment(this.song.id, 10, 0)
         this.getSongDetails(this.song.id)
-        this.getSongUrl(this.song.mid)
       })
   },
   data () {
@@ -243,11 +245,11 @@ export default {
     hotCommentList () { // 热评列表
       return this.hot_comment.commenttotal > 0 ? this.hot_comment.commentlist : []
     },
-    comments(){   // 合并列表
+    comments () {   // 合并列表
       return this.commentList.concat(this.hotCommentList)
     },
-    comments4show(){   // 展示列表
-      return this.comments.slice(0,this.currentCommentIndex)
+    comments4show () {   // 展示列表
+      return this.comments.slice(0, this.currentCommentIndex)
     }
 
   },
@@ -258,18 +260,13 @@ export default {
     toggleAlbum (e) { // 点击切换展示封面状态
       this.showAlbum = !this.showAlbum
     },
-    togglePlay () {
-      let audio = this.$refs.audio || ''
-      if (!audio) return;
-
-      if (audio && (audio.paused || audio.ended)) {
-        audio.play()
-        this.isPlay = true
-        return;
-      }
-      audio.pause();
+    play () {
+      this.isPlay = true
+      this.$refs.audio.play()
+    },
+    pause () {
       this.isPlay = false
-
+      this.$refs.audio.pause()
     },
     showComment () {  // 加载更多评论
       let total = this.comments.length
@@ -282,12 +279,6 @@ export default {
       this.getSongDetails(this.song.id)
       this.getSongUrl(this.song.mid)
 
-    },
-    getSongUrl (mid) {
-      API.getSongUrlResource(mid)
-        .then(res => {
-          this.songUrl = res
-        })
     },
     getComment (id, page, num) {  // 获取评论
       API.getSongComment(id, page, num).then(res => {
@@ -408,6 +399,7 @@ export default {
         border-right: 1px solid #b2b2b2;
         border-bottom: 1px solid #b2b2b2;
         -webkit-transform: rotate(-45deg);
+        transform:rotate(-45deg);
       }
     }
     .imfo-img {
@@ -454,6 +446,7 @@ export default {
     opacity: 0.06;
     -webkit-transform: scale(1.2);
     pointer-events: none;
+    transform: scale(1.2);
   }
 }
 section {
@@ -494,6 +487,7 @@ section {
       border-right: 1px solid #b2b2b2;
       border-bottom: 1px solid #b2b2b2;
       -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
     }
   }
 }
@@ -536,6 +530,7 @@ section {
       border-right: 1px solid #b2b2b2;
       border-bottom: 1px solid #b2b2b2;
       -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
     }
   }
 }

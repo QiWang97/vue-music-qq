@@ -1,7 +1,9 @@
 <template>
   <div class="p-l-sm">
     <h2 class="p-v-sm">热门歌单<span>更多</span></h2>
-    <ul class='flex flex-wrap'>
+    <transition-group name="flip-list"
+                      tag="ul"
+                      class='flex flex-wrap'>
       <router-link :to="{name:'songlist',query:{id:item.id}}"
                    tag="li"
                    v-for="item in list"
@@ -17,7 +19,7 @@
           <h5>{{item.songListAuthor}}</h5>
         </div>
       </router-link>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -34,6 +36,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.flip-list-move {
+  transition: transform 1s;
+}
 h2 > span {
   float: right;
   font-size: 14px;
@@ -46,6 +51,7 @@ h2 > span {
     border-right: 1px solid #000;
     border-bottom: 1px solid #000;
     -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
   }
 }
 li {

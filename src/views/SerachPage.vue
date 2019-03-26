@@ -19,30 +19,36 @@
       <h3>热门搜索</h3>
       <ul class='flex'>
         <li>{{special_key}}</li>
-        <li v-for="(item, index) in hotkey"
+        <li v-for="(item, index) in hotkey4show"
             :key="index"
-            @click="hotSearchClick(index)"> {{item.k}} </li>
+            @click="hotSearchClick(index)"> {{item.k}}
+        </li>
       </ul>
+      <h3 @click="hotkeyAll = !hotkeyAll"
+          class='text-center m-t-lg'>
+        {{hotkeyAll?'点击收起':'点击查看更多'}}
+      </h3>
     </div>
     <div class='searchRes bg-white'
          v-show="!hotSearch">
       <ul>
-        <li v-if='zhida.type===1'
-            @click="toSinger(zhida.zhida_singer.singerMID)">
-          <img :src="zhida.zhida_singer||''"
-               @error="imgErr"
+        <router-link :to="{name:'singer',query:{mid:zhida.zhida_singer.singerMID}}"
+                     v-if='zhida.type===1'
+                     tag='li'>
+          <img v-lazy="zhida.zhida_singer.singerPic"
                alt="">
           <h3 class='s-el'> {{zhida.zhida_singer.singerName||''}}</h3>
           <h5>歌手主页</h5>
-        </li>
-        <li v-for="(item,index) in searchRes.songs.list"
-            :key='index'>
-          <img :src="'https://y.gtimg.cn/music/photo_new/T002R68x68M000'+item.album.mid+'.jpg?max_age=2592000'"
-               @error="imgErr"
+        </router-link>
+        <router-link :to="{name:'album',query:{mid:item.album.mid}}"
+                     tag='li'
+                     v-for="(item,index) in searchRes.songs.list"
+                     :key='index'>
+          <img v-lazy="'https://y.gtimg.cn/music/photo_new/T002R68x68M000'+item.album.mid+'.jpg?max_age=2592000'"
                alt="">
           <h3 class='s-el'> {{item.name}}</h3>
           <h5>{{item.singer|filterName}}</h5>
-        </li>
+        </router-link>
       </ul>
     </div>
     <div v-show="showHis"
@@ -67,7 +73,6 @@
 
 <script>
 import API from '@/api'
-const imgerr = require('@/assets/img/search_sprite.png')
 
 export default {
   name: '',
@@ -130,6 +135,7 @@ export default {
       searchHistory: [],
       searchKw: '',
       hotkey: [{ k: '', n: 0 }],
+      hotkeyAll: false,
       special_key: '',
       special_url: ''
 
@@ -138,6 +144,9 @@ export default {
   computed: {
     showHis () {
       return (this.searchKw.trim() == '') && !this.hotSearch
+    },
+    hotkey4show () {
+      return this.hotkeyAll ? this.hotkey : this.hotkey.slice(0, 8)
     }
   },
   methods: {
@@ -206,9 +215,6 @@ export default {
         this.searchHistory.splice(index, 1)
       }
     },
-    imgErr (e) {
-      e.target.src = imgerr
-    },
     toSinger: function (mid) {
       console.log('跳转前')
       if (mid && this.zhida.type != 1 && mid != this.zhida.zhida_singer.singerMID) return;
@@ -230,15 +236,15 @@ export default {
 
 <style lang="scss" scoped>
 .search-bar {
-  height: 40px;
+  height: 2.5rem;
   border-radius: 3px;
   overflow: hidden;
 
   %search-item {
     display: inline-block;
-    height: 36px;
-    line-height: 36px;
-    font-size: 14px;
+    height: 2.25rem;
+    line-height: 2.25rem;
+    font-size: 1rem;
     vertical-align: top;
   }
 
@@ -271,7 +277,8 @@ export default {
 .hotSearch {
   background-color: #fff;
   overflow: hidden;
-  padding: 10px;
+  padding: 0.625rem;
+  min-height: 1.5rem;
 
   ul {
     flex-flow: row wrap;
@@ -280,14 +287,14 @@ export default {
 
   li {
     display: block;
-    margin: 10px 5px 0 0;
-    padding: 0 10px;
-    height: 30px;
-    font-size: 14px;
-    line-height: 30px;
+    margin: 0.625rem 0.3rem 0 0;
+    padding: 0 0.625rem;
+    height: 1.9rem;
+    font-size: 1rem;
+    line-height: 1.9rem;
     color: #000;
     border: 1px solid rgba(0, 0, 0, 0.6);
-    border-radius: 99px;
+    border-radius: 6rem;
     word-break: keep-all;
   }
   ul > li:first-child {
@@ -299,20 +306,20 @@ export default {
   li {
     position: relative;
     overflow: hidden;
-    height: 56px;
-    padding: 8px;
+    height: 3.5rem;
+    padding: 0.5rem;
     border-top: 1px solid #e5e5e5;
 
     img {
       position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 40px;
-      height: 40px;
+      top: 0.5rem;
+      left: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
     }
     h3,
     h5 {
-      margin-left: 50px;
+      margin-left: 3rem;
     }
   }
 }
@@ -320,29 +327,29 @@ export default {
   background-color: #fff;
   li {
     position: relative;
-    height: 45px;
+    height: 3rem;
     border-top: 1px solid #e5e5e5;
 
     i {
       display: inline-block;
       width: 10%;
       vertical-align: top;
-      font-size: 25px;
-      line-height: 44px;
+      font-size: 1.5rem;
+      line-height: 2.75rem;
       text-align: center;
     }
     span {
       display: inline-block;
       vertical-align: top;
       width: 80%;
-      line-height: 44px;
-      font-size: 14px;
+      line-height: 2.75rem;
+      font-size: 1rem;
     }
   }
   .clearAll {
     text-align: center;
-    line-height: 44px;
-    font-size: 14px;
+    line-height: 2.75rem;
+    font-size: 1rem;
     color: #47c88a;
   }
 }

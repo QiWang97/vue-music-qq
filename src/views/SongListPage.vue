@@ -1,67 +1,39 @@
 <template>
-  <article class='relative'>
-    <header id='top'>
-      <section class='singer-info'>
-        <header>
-          <img :src="logo"
-               alt="">
-          <h4>QQ音乐好歌单</h4>
-          <span>立即收藏</span>
-        </header>
-        <div class='album'>
-          <img :src="cdlist.logo"
-               alt="">
-          <div>
-            <h2 class='m-t-xs'>{{cdlist.dissname}}</h2>
-            <h4 class='m-t-xs'><img :src="logo"
-                   alt=""> {{cdlist.nickname}}</h4>
-            <h5 class='m-t-xs'>播放量： {{cdlist.visitnum | filterNum}}</h5>
-          </div>
-        </div>
-        <footer>
-          <h3 v-show="showPlayAll"
-              @click.stop="addAll"
-              class='m-m'><i class="fa fa-play"
-               aria-hidden="true"></i>播放全部</h3>
-          <h4 v-show="isPlay">
-            <i class="fa "
-               aria-hidden="true"
-               :class="isPlay?'fa-play-circle':'fa-pause-circle'"></i>
-            {{song.songorig}}
-            <br><span>{{song.songname}}</span>
-            <i></i>
-          </h4>
-        </footer>
-      </section>
-      <img class="cover"
-           :src="cdlist.logo"
-           alt="">
-    </header>
-    <div id='main'>
+  <list-bg ref='listbg'
+           :imgurl='cdlist.logo'
+           :songmid='song.songmid'
+           :list='playList'
+           :song='song'>
+    <template #info>
+      <h2 class='m-t-xs'>{{cdlist.dissname}}</h2>
+      <h4 class='m-t-sm'>{{cdlist.nickname}}</h4>
+      <h5 class='m-t-xs'>播放量： {{cdlist.visitnum | filterNum}}</h5>
+    </template>
+    <template #lyric>
+      <p>{{song.songorig}}
+        <br><span>{{song.songname}}</span>
+      </p>
+    </template>
+    <template #list>
       <section class='song-info p-h-xl bg-white relative'>
-        <h4>歌单 共（{{cdlist.total_song_num}}）首<span>收藏<i></i></span></h4>
+        <h3 class='m-v-sm'>歌单 共（{{cdlist.total_song_num}}）首<span>收藏<i></i></span></h3>
         <ul>
           <li v-for="(item, index) in showSongs"
               :key="index"
               @click="switchSong(index)">
             <h3>{{item.songorig||''}}</h3>
-            <h5>{{(item.singer||[]) | filterName}} {{item.songname||''}}</h5>
+            <h5>{{(item.singer||[]) | nameArr}} {{item.songname||''}}</h5>
           </li>
         </ul>
         <footer @click="loadMore">
           <h4>点击加载更多</h4>
         </footer>
       </section>
-      <footer class='m-v-xl info '>
-        <h2 class='text-center'>歌单简介</h2>
-        <p v-html='cdlist.desc'></p>
-        <img :src="logo"
-             alt="">
-        <h4 class='text-center'>QQ音乐</h4>
-
-      </footer>
-    </div>
-  </article>
+    </template>
+    <template>
+      <p v-html='cdlist.desc'></p>
+    </template>
+  </list-bg>
 </template>
 
 <script>
@@ -69,9 +41,12 @@
 import API from '@/api'
 export default {
   name: 'SongListPage',
-  props:['id'],
+  props: ['id'],
+  components: {   
+    ListBg: resolve => require(['@/components/List/ListBg'], resolve)
+  },
   mounted () {
-    window.addEventListener('scroll', this.handleScroll);    
+    window.addEventListener('scroll', this.handleScroll);
     this.init(parseInt(this.id))
   },
   beforeDestroy () {
@@ -80,7 +55,6 @@ export default {
   data () {
     return {
       listLoading: true,
-      logo: require('@/assets/img/logo.png'),
       isPlay: false,
       showPlayAll: true,
       renderIndex: 5,
@@ -150,7 +124,6 @@ export default {
         vid: "k0013kkrhv3"
       },
       playList: []
-
     }
   },
   computed: {
@@ -163,28 +136,16 @@ export default {
     switchSong (index) {
       this.song = this.cdlist.songlist[index]
       this.isPlay = true
+      this.$refs.listbg.play()
     },
     loadMore (e) {
       if (this.renderIndex > this.cdlist.total_song_num) return
       this.renderIndex += 5
     },
-    handleScroll (e) {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      //  当滚动超过 200 时，实现吸顶效果
-      let top = document.getElementById('top')
-      if (scrollTop > 225) {
-        top.style.transform = 'translateY(-225px)'
-      } else {
-        top.style.transform = `translateY(-${scrollTop}px)`
-      }
-    },
-    addAll () {
-      this.playList = this.cdlist.songlist
-    },
     init (dissid) {
       this.$indexDB.checkData(this, 'songLists', dissid)
         .then(res => {
-          this.slider = res.data
+          this.cdlist = res.data
         }).catch(e => {
           console.log(e)
           this.getData(dissid)
@@ -207,139 +168,16 @@ export default {
       val = val < 10000 ? val : (val / 10000).toFixed(2) + ' 万'
       return val
     },
-    filterName: function (arr) {
-      let name = ''
-      arr.forEach(el => {
-        name = name + el.name + ' '
-      });
-      return name
-    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-article {
-  padding-top: 300px;
-}
-.top {
-  z-index: 10;
-}
-#main {
-  z-index: 2;
-}
-#top {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  overflow: hidden;
-  z-index: 10;
-  .cover {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    -webkit-transform: scale(1.1) translateZ(0);
-    -webkit-filter: blur(36px);
-  }
-}
-.singer-info {
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  z-index: 4;
-
-  header {
-    position: relative;
-    overflow: hidden;
-    height: 80px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 0.05rem 0.05rem rgba(0, 0, 0, 0.02);
-    img {
-      float: left;
-      width: 60px;
-      height: 60px;
-      border-radius: 100%;
-    }
-    h3 {
-      margin-left: 70px;
-      line-height: 40px;
-    }
-    h5 {
-      margin-left: 70px;
-      line-height: 20px;
-    }
-    span {
-      display: block;
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      width: 78px;
-      height: 27px;
-      margin-top: -13px;
-      padding: 3px 5px;
-      border: 1px rgba(255, 255, 255, 0.3) solid;
-      border-radius: 15px;
-      text-align: center;
-      font-size: 14px;
-    }
-  }
-  .album {
-    height: 145px;
-    padding: 10px;
-    & > img {
-      float: left;
-      width: 125px;
-      height: 125px;
-    }
-    div {
-      overflow: hidden;
-      margin-left: 130px;
-      height: 125px;
-      padding: 5px;
-    }
-    h4 > img {
-      display: inline-block;
-      width: 30px;
-    }
-  }
-  footer {
-    position: relative;
-    height: 84px;
-    padding: 10px;
-    transition: all 1s ease-in-out;
-    -webkit-transition: 1s ease-in-out;
-    h3 {
-      width: 170px;
-      padding: 0 20px;
-      text-align: center;
-      line-height: 40px;
-      color: #fff;
-      border-radius: 20px;
-      background: #31c27c;
-      i {
-        display: inline-block;
-        margin-right: 10px;
-      }
-    }
-    span {
-      font-size: 12px;
-    }
-  }
-}
 .song-info {
-  h4 {
-    line-height: 50px;
-  }
   span {
     float: right;
     color: #31c27c;
   }
-
   li {
     height: 60px;
   }
@@ -347,17 +185,5 @@ article {
     text-align: center;
     line-height: 30px;
   }
-}
-
-.info p {
-  padding: 15px;
-  font-size: 14px;
-  line-height: 24px;
-  text-align: justify;
-}
-.info img {
-  width: 25px;
-  height: 25px;
-  margin: 0 auto;
 }
 </style>

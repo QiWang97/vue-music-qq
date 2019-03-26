@@ -1,3 +1,5 @@
+import { reject } from "q";
+
 /* ejslint esversion:6  */
 /*
 用来获取和设置 删除 indexDB 存储
@@ -83,12 +85,13 @@ const indexDB = {
   },
   getDataByKey: function (db, storename, key) {
     //根据存储空间的键找到对应数据
-    return new Promise(resolve => {
+    return new Promise((resolve,reject) => {
       let store = db.transaction(storename, 'readwrite').objectStore(storename);
       let request = store.get(key);
       request.onerror = function () {
         //console.log('getDataByKey error');
        console.log('GetDataByKey error');
+       reject('GET KEY 出错')
       };
       request.onsuccess = function (e) {
         let result = e.target.result;
