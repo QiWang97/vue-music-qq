@@ -24,19 +24,15 @@
 
 ### 关于效果
 
-![01 (README/01 (4).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01%20(1).jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/1.jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/2.jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/3.jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/4.jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/5.jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/6.jpg)
+![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/7.jpg)
 
-![01 (README/01 (5).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (5).jpg)
 
-![01 (README/01 (6).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (6).jpg)
-
-![01 (README/01 (7).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (7).jpg)
-
-![01 (README/01 (1).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (1).jpg)
-
-![01 (README/01 (2).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (2).jpg)
-
-![01 (README/01 (3).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (3).jpg)
 
 
 
