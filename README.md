@@ -24,7 +24,7 @@
 
 ### 关于效果
 
-![01 (README/01 (4).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (4).jpg)
+![01 (README/01 (4).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01%20(1).jpg)
 
 ![01 (README/01 (5).jpg)](https://github.com/QiWang97/vue-music-qq/blob/db/static/Read_img/01 (5).jpg)
 
