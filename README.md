@@ -20,11 +20,17 @@
 ### 关于功能
 
 + QQ音乐轮播图、推荐歌单、推荐电台
+
 + QQ音乐 搜索歌曲、歌手、电台
+
 + QQ音乐歌曲、电台详细信息
+
 + 播放功能
 
+
 ### 关于效果
+
+> 以下效果使用 indexDB 存储数据，请切换 db 分支使用
 
 ![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/1.jpg)
 ![](https://github.com/QiWang97/vue-music-qq/blob/db/static/md/2.jpg)
@@ -72,4 +78,3 @@ yarn run build
 数据来自分析 **QQ音乐**网络请求的接口
 接口暴露在源码， 请勿商用！！
 
->>>>>>> 61f6c9ad0192183d974df00b00444dd1145730ae
